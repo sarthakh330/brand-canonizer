@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://brand-canonizer.local/schemas/metadata.v1.json",
+  "title": "Brand Extraction Metadata",
+  "description": "Top-level metadata for a brand extraction (used in gallery view)",
+  "type": "object",
+  "required": ["brand_id", "brand_name", "source_url", "extracted_at", "version"],
+  "properties": {
+    "brand_id": {
+      "type": "string",
+      "description": "Unique identifier for this brand extraction",
+      "examples": ["stripe_2025_12_29"]
+    },
+    "brand_name": {
+      "type": "string",
+      "description": "Human-readable brand name",
+      "examples": ["Stripe"]
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Original website URL",
+      "examples": ["https://stripe.com"]
+    },
+    "extracted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of extraction",
+      "examples": ["2025-12-29T10:23:45Z"]
+    },
+    "version": {
+      "type": "integer",
+      "description": "Version number (1 for first extraction, increments on re-extraction)",
+      "minimum": 1,
+      "examples": [1]
+    },
+    "status": {
+      "type": "string",
+      "description": "Extraction status",
+      "enum": ["completed", "processing", "failed"],
+      "examples": ["completed"]
+    },
+    "evaluation_summary": {
+      "type": "object",
+      "description": "Quick evaluation summary (for gallery cards)",
+      "required": ["overall_score", "quality_band"],
+      "properties": {
+        "overall_score": {
+          "type": "number",
+          "description": "Overall score (1-5)",
+          "minimum": 1.0,
+          "maximum": 5.0,
+          "examples": [4.2]
+        },
+        "quality_band": {
+          "type": "string",
+          "description": "Quality classification",
+          "enum": ["excellent", "good", "acceptable", "poor"],
+          "examples": ["good"]
+        },
+        "top_strengths": {
+          "type": "array",
+          "description": "Top 2 strongest dimensions",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "examples": [["Brand Fidelity", "Actionability"]]
+        },
+        "top_weaknesses": {
+          "type": "array",
+          "description": "Top 2 weakest dimensions",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "examples": [["Accessibility", "Completeness"]]
+        }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "description": "Preview data for gallery cards",
+      "properties": {
+        "dominant_colors": {
+          "type": "array",
+          "description": "Top 3-5 colors for visual preview",
+          "items": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "minItems": 3,
+          "maxItems": 5,
+          "examples": [["#635bff", "#0a2540", "#ffffff"]]
+        },
+        "primary_font": {
+          "type": "string",
+          "description": "Primary font family name",
+          "examples": ["Inter"]
+        },
+        "screenshot_thumbnail": {
+          "type": "string",
+          "description": "Path to thumbnail screenshot",
+          "examples": ["captures/screenshots/hero_thumbnail.png"]
+        }
+      }
+    },
+    "execution_summary": {
+      "type": "object",
+      "description": "Quick execution stats",
+      "properties": {
+        "total_duration_ms": {
+          "type": "integer",
+          "description": "Total extraction time (ms)",
+          "examples": [81243]
+        },
+        "total_tokens": {
+          "type": "integer",
+          "description": "Total tokens used",
+          "examples": [94532]
+        },
+        "estimated_cost_usd": {
+          "type": "number",
+          "description": "Estimated cost in USD",
+          "examples": [0.14]
+        }
+      }
+    },
+    "adjectives": {
+      "type": "array",
+      "description": "User-provided brand adjectives (optional)",
+      "items": {
+        "type": "string"
+      },
+      "examples": [["professional", "trustworthy", "modern"]]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Auto-generated or user-added tags",
+      "items": {
+        "type": "string"
+      },
+      "examples": [["saas", "fintech", "developer-focused"]]
+    },
+    "previous_version": {
+      "type": "string",
+      "description": "Brand ID of previous version (if re-extraction)",
+      "examples": ["stripe_2025_12_20"]
+    }
+  }
+}

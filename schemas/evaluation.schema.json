@@ -1,0 +1,235 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://brand-canonizer.local/schemas/evaluation.v1.json",
+  "title": "Brand Extraction Evaluation",
+  "description": "Quality assessment of brand extraction using 6-dimension rubric",
+  "type": "object",
+  "required": ["version", "rubric_version", "brand_id", "overall_score", "dimensions", "recommendations"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Evaluation schema version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "rubric_version": {
+      "type": "string",
+      "description": "Rubric version used for this evaluation",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.2.0"]
+    },
+    "brand_id": {
+      "type": "string",
+      "description": "Brand ID being evaluated",
+      "examples": ["stripe_2025_12_29"]
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of evaluation",
+      "examples": ["2025-12-29T10:25:30Z"]
+    },
+    "overall_score": {
+      "type": "number",
+      "description": "Weighted average score across all dimensions",
+      "minimum": 1.0,
+      "maximum": 5.0,
+      "examples": [4.2]
+    },
+    "quality_band": {
+      "type": "string",
+      "description": "Quality classification based on overall score",
+      "enum": ["excellent", "good", "acceptable", "poor"],
+      "examples": ["good"]
+    },
+    "dimensions": {
+      "type": "array",
+      "description": "Individual dimension scores and justifications",
+      "items": {
+        "$ref": "#/definitions/DimensionScore"
+      },
+      "minItems": 6,
+      "maxItems": 6
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Actionable recommendations for improvement",
+      "items": {
+        "$ref": "#/definitions/Recommendation"
+      },
+      "examples": [[
+        {
+          "priority": "high",
+          "dimension": "brand_fidelity",
+          "issue": "Color semantic mapping ambiguous between Primary and Accent blues",
+          "suggestion": "Analyze CTA vs link usage context to clarify semantic distinction",
+          "expected_impact": "Would improve Parseability and Actionability scores"
+        }
+      ]]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Evaluation metadata",
+      "properties": {
+        "evaluator": {
+          "type": "string",
+          "description": "Evaluator identifier (model or human)",
+          "examples": ["claude-3-5-sonnet-20250929", "human-reviewer"]
+        },
+        "evaluation_duration_ms": {
+          "type": "integer",
+          "description": "Time taken to evaluate (milliseconds)",
+          "minimum": 0,
+          "examples": [14234]
+        },
+        "tokens_used": {
+          "type": "integer",
+          "description": "Tokens used for evaluation (if applicable)",
+          "minimum": 0,
+          "examples": [12453]
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DimensionScore": {
+      "type": "object",
+      "required": ["name", "display_name", "score", "weight", "justification"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Dimension identifier",
+          "enum": [
+            "brand_fidelity",
+            "completeness",
+            "parseability",
+            "actionability",
+            "accessibility",
+            "insight_depth"
+          ],
+          "examples": ["brand_fidelity"]
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Human-readable dimension name",
+          "examples": ["Brand Fidelity"]
+        },
+        "score": {
+          "type": "number",
+          "description": "Score for this dimension (1-5 scale)",
+          "minimum": 1.0,
+          "maximum": 5.0,
+          "examples": [4.0]
+        },
+        "weight": {
+          "type": "number",
+          "description": "Weight of this dimension (0-1, sums to 1.0)",
+          "minimum": 0,
+          "maximum": 1.0,
+          "examples": [0.4]
+        },
+        "justification": {
+          "type": "string",
+          "description": "Detailed explanation of the score (2-3 sentences)",
+          "examples": [
+            "The extracted color palette accurately captures Stripe's signature purple (#635bff) and dark blue (#0a2540), with correct semantic mapping to primary and secondary usage. Typography extraction correctly identifies Inter as the primary font with appropriate weights. However, secondary accent colors show some ambiguity between primary and accent blues in link contexts."
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "description": "Specific evidence supporting the score",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["strength", "weakness", "observation"],
+                "examples": ["strength"]
+              },
+              "description": {
+                "type": "string",
+                "examples": ["Primary color #635bff matches brand exactly"]
+              },
+              "reference": {
+                "type": "string",
+                "description": "Reference to artifact (screenshot, spec field)",
+                "examples": ["design_tokens.colors.primary.value"]
+              }
+            }
+          }
+        },
+        "sub_scores": {
+          "type": "object",
+          "description": "Optional breakdown of sub-criteria",
+          "examples": [{
+            "color_accuracy": 4.5,
+            "typography_accuracy": 4.0,
+            "spacing_accuracy": 3.5,
+            "component_accuracy": 4.0
+          }]
+        }
+      }
+    },
+    "Recommendation": {
+      "type": "object",
+      "required": ["priority", "dimension", "issue", "suggestion"],
+      "properties": {
+        "priority": {
+          "type": "string",
+          "description": "Priority level for this recommendation",
+          "enum": ["critical", "high", "medium", "low"],
+          "examples": ["high"]
+        },
+        "dimension": {
+          "type": "string",
+          "description": "Which dimension(s) this affects",
+          "enum": [
+            "brand_fidelity",
+            "completeness",
+            "parseability",
+            "actionability",
+            "accessibility",
+            "insight_depth",
+            "multiple"
+          ],
+          "examples": ["brand_fidelity"]
+        },
+        "issue": {
+          "type": "string",
+          "description": "Clear description of the problem",
+          "examples": [
+            "Color semantic mapping ambiguous between Primary and Accent blues",
+            "Missing component states (hover, active, disabled)",
+            "Typography scale has gaps (no h4, h5 defined)"
+          ]
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "Actionable suggestion for next iteration",
+          "examples": [
+            "Analyze CTA vs link usage context to clarify semantic distinction",
+            "Extract component states from interactive elements",
+            "Extend typography extraction to cover full heading hierarchy"
+          ]
+        },
+        "expected_impact": {
+          "type": "string",
+          "description": "Expected improvement if implemented",
+          "examples": [
+            "Would improve Parseability and Actionability scores by ~0.3-0.5",
+            "Would bring Completeness to 4.5+",
+            "Critical for Claude Code to apply styles correctly"
+          ]
+        },
+        "implementation_notes": {
+          "type": "string",
+          "description": "Technical notes on how to implement (optional)",
+          "examples": [
+            "Use Playwright to trigger :hover states and capture computed styles",
+            "Cross-reference all links and buttons to identify semantic patterns"
+          ]
+        }
+      }
+    }
+  }
+}

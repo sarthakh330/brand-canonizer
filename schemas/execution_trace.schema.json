@@ -1,0 +1,249 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://brand-canonizer.local/schemas/execution_trace.v1.json",
+  "title": "Execution Trace",
+  "description": "Complete diagnostic trace of the extraction pipeline execution",
+  "type": "object",
+  "required": ["version", "pipeline_version", "brand_id", "stages", "summary"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Trace schema version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "pipeline_version": {
+      "type": "string",
+      "description": "Version of the extraction pipeline",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "brand_id": {
+      "type": "string",
+      "description": "Brand ID for this extraction",
+      "examples": ["stripe_2025_12_29"]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Pipeline start timestamp (ISO 8601)",
+      "examples": ["2025-12-29T10:23:45Z"]
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Pipeline completion timestamp (ISO 8601)",
+      "examples": ["2025-12-29T10:25:06Z"]
+    },
+    "stages": {
+      "type": "array",
+      "description": "Individual stage execution details",
+      "items": {
+        "$ref": "#/definitions/StageTrace"
+      },
+      "minItems": 4,
+      "maxItems": 4,
+      "examples": [[
+        {
+          "name": "capture",
+          "status": "success",
+          "start_time": "2025-12-29T10:23:45Z",
+          "end_time": "2025-12-29T10:24:03Z",
+          "duration_ms": 18234
+        }
+      ]]
+    },
+    "summary": {
+      "type": "object",
+      "description": "Overall execution summary",
+      "required": ["total_duration_ms", "status"],
+      "properties": {
+        "total_duration_ms": {
+          "type": "integer",
+          "description": "Total pipeline duration in milliseconds",
+          "minimum": 0,
+          "examples": [81243]
+        },
+        "status": {
+          "type": "string",
+          "description": "Overall pipeline status",
+          "enum": ["success", "partial_success", "failed"],
+          "examples": ["success"]
+        },
+        "total_tokens": {
+          "type": "integer",
+          "description": "Total tokens used across all AI calls",
+          "minimum": 0,
+          "examples": [94532]
+        },
+        "estimated_cost_usd": {
+          "type": "number",
+          "description": "Estimated total cost in USD",
+          "minimum": 0,
+          "examples": [0.14]
+        },
+        "warnings": {
+          "type": "array",
+          "description": "Non-fatal warnings during execution",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["Screenshot capture slow on mobile viewport", "Some font weights not detected"]
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "description": "Errors encountered (empty if success)",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "StageTrace": {
+      "type": "object",
+      "required": ["name", "display_name", "status", "start_time", "end_time", "duration_ms"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Stage identifier",
+          "enum": ["capture", "analyze", "synthesize", "evaluate"],
+          "examples": ["capture"]
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Human-readable stage name",
+          "examples": ["Capture"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Stage execution status",
+          "enum": ["success", "warning", "failed", "skipped"],
+          "examples": ["success"]
+        },
+        "start_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Stage start timestamp (ISO 8601)",
+          "examples": ["2025-12-29T10:23:45Z"]
+        },
+        "end_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Stage end timestamp (ISO 8601)",
+          "examples": ["2025-12-29T10:24:03Z"]
+        },
+        "duration_ms": {
+          "type": "integer",
+          "description": "Stage duration in milliseconds",
+          "minimum": 0,
+          "examples": [18234]
+        },
+        "artifacts": {
+          "type": "array",
+          "description": "Artifacts produced by this stage",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "examples": ["hero_screenshot.png"]
+              },
+              "path": {
+                "type": "string",
+                "examples": ["captures/screenshots/hero_screenshot.png"]
+              },
+              "size_bytes": {
+                "type": "integer",
+                "examples": [847234]
+              },
+              "type": {
+                "type": "string",
+                "enum": ["screenshot", "json", "html", "css", "log"],
+                "examples": ["screenshot"]
+              }
+            }
+          }
+        },
+        "logs": {
+          "type": "array",
+          "description": "Stage execution logs (for diagnostics tab)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "examples": ["2025-12-29T10:23:47Z"]
+              },
+              "level": {
+                "type": "string",
+                "enum": ["info", "warning", "error", "debug"],
+                "examples": ["info"]
+              },
+              "message": {
+                "type": "string",
+                "examples": ["Loading https://stripe.com", "Scrolling to section 2 of 5"]
+              }
+            }
+          }
+        },
+        "errors": {
+          "type": "array",
+          "description": "Errors encountered during this stage",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "examples": ["NETWORK_ERROR", "TIMEOUT"]
+              },
+              "message": {
+                "type": "string",
+                "examples": ["Failed to load page after 30s"]
+              },
+              "recoverable": {
+                "type": "boolean",
+                "description": "Whether the error was recoverable"
+              }
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Stage-specific metrics",
+          "properties": {
+            "tokens_input": {
+              "type": "integer",
+              "description": "Input tokens (AI calls only)",
+              "examples": [15234]
+            },
+            "tokens_output": {
+              "type": "integer",
+              "description": "Output tokens (AI calls only)",
+              "examples": [8521]
+            },
+            "model_used": {
+              "type": "string",
+              "description": "AI model used (if applicable)",
+              "examples": ["claude-3-5-sonnet-20250929"]
+            },
+            "api_calls": {
+              "type": "integer",
+              "description": "Number of API calls made",
+              "examples": [4]
+            },
+            "cache_hits": {
+              "type": "integer",
+              "description": "Number of cache hits (if caching enabled)",
+              "examples": [2]
+            }
+          }
+        }
+      }
+    }
+  }
+}

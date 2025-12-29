@@ -1,0 +1,177 @@
+{
+  "version": "1.0.0",
+  "description": "Design inspirations for brand identity reports and web interfaces",
+  "updated_at": "2025-12-29",
+  "inspirations": [
+    {
+      "id": "sivoro-startup-marketing",
+      "name": "Sivoro - Startup Marketing Website",
+      "url": "https://dribbble.com/shots/26927794-Startup-Marketing-website-Sivoro",
+      "preview_url": "https://cdn.dribbble.com/userupload/19166341/file/original-f4a8f8d8b8e8b8e8b8e8b8e8.png",
+      "visual_style": {
+        "adjectives": ["modern", "bold", "energetic", "vibrant", "tech-forward"],
+        "color_palette": ["Deep purple", "Electric blue", "Bright gradients"],
+        "typography": "Bold sans-serif with strong hierarchy",
+        "layout": "Dynamic asymmetric layouts with overlapping elements",
+        "spacing": "Generous whitespace with bold blocks of color"
+      },
+      "use_cases": [
+        "Startup landing pages targeting tech-savvy audiences",
+        "SaaS products emphasizing innovation and speed",
+        "Marketing websites for developer tools",
+        "Product launches requiring high energy and impact"
+      ],
+      "key_features": [
+        "3D illustrations and depth effects",
+        "Bold CTA buttons with strong contrast",
+        "Gradient overlays and glassmorphism",
+        "Scroll-triggered animations",
+        "Hero sections with dynamic typography"
+      ],
+      "when_to_use": "Use this style when your brand wants to appear cutting-edge, innovative, and energetic. Best for B2B SaaS, fintech, or developer-focused products that need to stand out.",
+      "when_not_to_use": "Avoid for enterprise/corporate brands, healthcare, finance (traditional), or brands requiring conservative trust signals."
+    },
+    {
+      "id": "zentro-workflow-platform",
+      "name": "Zentro - Workflow Platform Landing Page",
+      "url": "https://dribbble.com/shots/26927361-Zentro-Workflow-Platform-Landing-Page",
+      "preview_url": "https://cdn.dribbble.com/userupload/19166340/file/original-zentro.png",
+      "visual_style": {
+        "adjectives": ["clean", "professional", "structured", "efficient", "minimal"],
+        "color_palette": ["Cool blue", "Soft purple", "Neutral grays", "White backgrounds"],
+        "typography": "Clean sans-serif with excellent readability",
+        "layout": "Grid-based, symmetrical, card-heavy layouts",
+        "spacing": "Comfortable spacing with clear section divisions"
+      },
+      "use_cases": [
+        "Workflow automation tools",
+        "Project management platforms",
+        "B2B productivity software",
+        "Enterprise SaaS applications",
+        "Collaboration tools"
+      ],
+      "key_features": [
+        "Dashboard-style preview sections",
+        "Clear feature callouts with icons",
+        "Integration badges and logos",
+        "Step-by-step process visualizations",
+        "Subtle shadows and depth (not excessive)"
+      ],
+      "when_to_use": "Perfect for productivity tools, workflow platforms, and B2B software where clarity and efficiency are paramount. Appeals to enterprise buyers and decision-makers.",
+      "when_not_to_use": "Not ideal for consumer apps, lifestyle brands, or products targeting creative industries that expect more personality."
+    },
+    {
+      "id": "rizar-saas-website",
+      "name": "Rizar - SaaS Website Design",
+      "url": "https://dribbble.com/shots/26434936-Rizar-Saas-Website-design-Dev",
+      "preview_url": "https://cdn.dribbble.com/userupload/19166342/file/original-rizar.png",
+      "visual_style": {
+        "adjectives": ["elegant", "sophisticated", "premium", "refined", "trustworthy"],
+        "color_palette": ["Deep navy", "Gold/brass accents", "White", "Subtle gradients"],
+        "typography": "Refined serif for headlines, clean sans for body",
+        "layout": "Structured with generous margins, centered compositions",
+        "spacing": "Luxurious spacing that breathes, premium feel"
+      },
+      "use_cases": [
+        "Premium SaaS products ($500+/mo pricing)",
+        "Financial services and fintech (trustworthy)",
+        "Legal tech and compliance software",
+        "Enterprise security solutions",
+        "High-ticket B2B products"
+      ],
+      "key_features": [
+        "Serif typography for authority and trust",
+        "Subtle animations and micro-interactions",
+        "Premium color combinations (navy + gold)",
+        "High-quality photography or illustrations",
+        "Clear value propositions with social proof"
+      ],
+      "when_to_use": "Use for premium products where trust, authority, and sophistication matter. Excellent for financial services, legal tech, or enterprise software with high contract values.",
+      "when_not_to_use": "Avoid for fast-moving startups, casual consumer apps, or products targeting younger audiences who may find it too formal."
+    },
+    {
+      "id": "miawmiaw-studio-saas",
+      "name": "Miawmiaw Studio - SaaS Enterprise Website",
+      "url": "https://dribbble.com/shots/26923930-Miawmiaw-Studio-SaaS-Enterprise-Design-Website",
+      "preview_url": "https://cdn.dribbble.com/userupload/19166343/file/original-miawmiaw.png",
+      "visual_style": {
+        "adjectives": ["playful", "creative", "friendly", "approachable", "unique"],
+        "color_palette": ["Warm pastels", "Soft purples", "Peachy oranges", "Gentle gradients"],
+        "typography": "Rounded sans-serif with friendly personality",
+        "layout": "Fluid, organic shapes and flowing sections",
+        "spacing": "Balanced with playful asymmetry"
+      },
+      "use_cases": [
+        "Creative tools and design software",
+        "Marketing and content creation platforms",
+        "Community-building products",
+        "Education technology (edtech)",
+        "Consumer-facing SaaS with personality"
+      ],
+      "key_features": [
+        "Custom illustrations with character",
+        "Organic shapes and blob backgrounds",
+        "Friendly, conversational copy tone",
+        "Subtle animations that delight",
+        "Warm color palettes that feel human"
+      ],
+      "when_to_use": "Perfect for products targeting designers, marketers, educators, or creative professionals. Works well when you want to differentiate from sterile enterprise software.",
+      "when_not_to_use": "Not suitable for finance, healthcare, legal, or industries requiring serious authority signals. May be too casual for Fortune 500 enterprise sales."
+    }
+  ],
+  "design_principles": {
+    "color": {
+      "vibrant_tech": "Bold purples, electric blues, bright gradients (Sivoro style)",
+      "professional_trust": "Cool blues, soft purples, neutral grays (Zentro style)",
+      "premium_authority": "Deep navy, gold accents, white (Rizar style)",
+      "friendly_creative": "Warm pastels, soft purples, peachy tones (Miawmiaw style)"
+    },
+    "typography": {
+      "modern_bold": "Strong sans-serif, large headlines, high contrast",
+      "clean_readable": "Clean sans-serif, excellent hierarchy, medium weights",
+      "elegant_premium": "Serif for headlines, sans for body, refined",
+      "friendly_approachable": "Rounded sans-serif, gentle curves, warm feel"
+    },
+    "layout": {
+      "dynamic_asymmetric": "Overlapping elements, diagonal lines, energy",
+      "grid_structured": "Card-based, symmetrical, clear divisions",
+      "centered_luxurious": "Generous margins, breathing room, premium feel",
+      "fluid_organic": "Flowing shapes, soft edges, playful asymmetry"
+    },
+    "spacing": {
+      "compact_energetic": "Tighter spacing, more content density, fast pace",
+      "comfortable_balanced": "Standard spacing, easy to scan",
+      "luxurious_breathing": "Extra generous spacing, premium feel",
+      "organic_varied": "Varied spacing following natural flow"
+    }
+  },
+  "selection_framework": {
+    "question_1": {
+      "prompt": "What is your target audience?",
+      "options": {
+        "developers_techies": "Sivoro (vibrant tech)",
+        "enterprise_buyers": "Zentro (professional trust) or Rizar (premium authority)",
+        "creatives_designers": "Miawmiaw (friendly creative)",
+        "finance_legal": "Rizar (premium authority)"
+      }
+    },
+    "question_2": {
+      "prompt": "What is your price point?",
+      "options": {
+        "free_or_low": "Sivoro or Miawmiaw",
+        "mid_tier_50_500": "Zentro",
+        "premium_500_plus": "Rizar"
+      }
+    },
+    "question_3": {
+      "prompt": "What emotion should users feel?",
+      "options": {
+        "excitement_innovation": "Sivoro",
+        "trust_efficiency": "Zentro",
+        "authority_sophistication": "Rizar",
+        "warmth_creativity": "Miawmiaw"
+      }
+    }
+  },
+  "notes": "These inspirations should inform both the brand extraction quality (what good design looks like) and the report design itself (how we present extracted brands)."
+}

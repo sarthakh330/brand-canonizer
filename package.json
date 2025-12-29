@@ -1,0 +1,36 @@
+{
+  "name": "brand-canonizer",
+  "version": "1.0.0",
+  "description": "Extract brand identity from websites into machine-readable specifications",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "nodemon src/server.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start": "node src/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:e2e": "playwright test",
+    "validate:schemas": "node scripts/validate-schemas.js"
+  },
+  "keywords": ["brand", "design-system", "ai", "extraction", "claude"],
+  "author": "Sarthak Handa",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "playwright": "^1.49.1",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^3.0.1",
+    "dotenv": "^16.4.7",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "concurrently": "^9.1.2"
+  }
+}

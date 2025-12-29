@@ -1,0 +1,672 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://brand-canonizer.local/schemas/brand_spec.v1.json",
+  "title": "Brand Specification",
+  "description": "Machine-readable brand identity specification that AI systems can parse and apply",
+  "type": "object",
+  "required": ["version", "metadata", "brand_essence", "design_tokens", "components", "patterns"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version (semantic versioning)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Extraction metadata",
+      "required": ["brand_id", "brand_name", "source_url", "extracted_at", "extraction_duration_ms"],
+      "properties": {
+        "brand_id": {
+          "type": "string",
+          "description": "Unique identifier for this brand",
+          "examples": ["stripe_2025_12_29"]
+        },
+        "brand_name": {
+          "type": "string",
+          "description": "Human-readable brand name",
+          "examples": ["Stripe"]
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Original website URL",
+          "examples": ["https://stripe.com"]
+        },
+        "extracted_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of extraction",
+          "examples": ["2025-12-29T10:23:45Z"]
+        },
+        "extraction_duration_ms": {
+          "type": "integer",
+          "description": "Total extraction time in milliseconds",
+          "minimum": 0,
+          "examples": [81243]
+        },
+        "adjectives": {
+          "type": "array",
+          "description": "User-provided brand adjectives (optional)",
+          "items": {
+            "type": "string"
+          },
+          "examples": [["professional", "trustworthy", "modern"]]
+        },
+        "pipeline_version": {
+          "type": "string",
+          "description": "Version of extraction pipeline used",
+          "examples": ["1.0.0"]
+        }
+      }
+    },
+    "brand_essence": {
+      "type": "object",
+      "description": "High-level brand identity and tone",
+      "required": ["description", "adjectives", "tone"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "2-3 sentence brand essence summary",
+          "examples": ["Stripe's brand identity centers on trust, simplicity, and technical sophistication. The visual language uses deep purples and blues to convey premium quality while maintaining approachability through clean layouts and ample whitespace."]
+        },
+        "adjectives": {
+          "type": "array",
+          "description": "5-8 adjectives that capture the brand",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 5,
+          "maxItems": 10,
+          "examples": [["professional", "trustworthy", "modern", "technical", "sophisticated", "clean", "premium"]]
+        },
+        "tone": {
+          "type": "string",
+          "description": "Voice and tone of copy",
+          "enum": ["formal", "professional", "conversational", "casual", "playful", "technical", "friendly"],
+          "examples": ["professional"]
+        },
+        "target_audience": {
+          "type": "string",
+          "description": "Inferred target audience (optional)",
+          "examples": ["Developers and business owners building online payment systems"]
+        }
+      }
+    },
+    "design_tokens": {
+      "type": "object",
+      "description": "Core design tokens (colors, typography, spacing, effects)",
+      "required": ["colors", "typography", "spacing"],
+      "properties": {
+        "colors": {
+          "type": "object",
+          "description": "Color palette with semantic mapping",
+          "required": ["primary", "secondary", "neutrals"],
+          "properties": {
+            "primary": {
+              "$ref": "#/definitions/ColorToken"
+            },
+            "secondary": {
+              "$ref": "#/definitions/ColorToken"
+            },
+            "accent": {
+              "$ref": "#/definitions/ColorToken"
+            },
+            "neutrals": {
+              "type": "object",
+              "description": "Neutral color scale",
+              "required": ["white", "black", "gray"],
+              "properties": {
+                "white": {
+                  "$ref": "#/definitions/ColorToken"
+                },
+                "black": {
+                  "$ref": "#/definitions/ColorToken"
+                },
+                "gray": {
+                  "type": "object",
+                  "description": "Gray scale (light to dark)",
+                  "patternProperties": {
+                    "^(50|100|200|300|400|500|600|700|800|900)$": {
+                      "$ref": "#/definitions/ColorToken"
+                    }
+                  }
+                }
+              }
+            },
+            "semantic": {
+              "type": "object",
+              "description": "Semantic colors (success, warning, error, info)",
+              "properties": {
+                "success": {
+                  "$ref": "#/definitions/ColorToken"
+                },
+                "warning": {
+                  "$ref": "#/definitions/ColorToken"
+                },
+                "error": {
+                  "$ref": "#/definitions/ColorToken"
+                },
+                "info": {
+                  "$ref": "#/definitions/ColorToken"
+                }
+              }
+            }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "description": "Typography system",
+          "required": ["font_families", "scale", "weights"],
+          "properties": {
+            "font_families": {
+              "type": "object",
+              "description": "Font families used",
+              "required": ["primary"],
+              "properties": {
+                "primary": {
+                  "$ref": "#/definitions/FontFamily"
+                },
+                "secondary": {
+                  "$ref": "#/definitions/FontFamily"
+                },
+                "monospace": {
+                  "$ref": "#/definitions/FontFamily"
+                }
+              }
+            },
+            "scale": {
+              "type": "object",
+              "description": "Typographic scale (semantic sizes)",
+              "required": ["h1", "h2", "h3", "body", "small"],
+              "properties": {
+                "h1": {
+                  "$ref": "#/definitions/TypographyStyle"
+                },
+                "h2": {
+                  "$ref": "#/definitions/TypographyStyle"
+                },
+                "h3": {
+                  "$ref": "#/definitions/TypographyStyle"
+                },
+                "h4": {
+                  "$ref": "#/definitions/TypographyStyle"
+                },
+                "body": {
+                  "$ref": "#/definitions/TypographyStyle"
+                },
+                "small": {
+                  "$ref": "#/definitions/TypographyStyle"
+                },
+                "caption": {
+                  "$ref": "#/definitions/TypographyStyle"
+                }
+              }
+            },
+            "weights": {
+              "type": "array",
+              "description": "Font weights used",
+              "items": {
+                "type": "integer",
+                "enum": [100, 200, 300, 400, 500, 600, 700, 800, 900]
+              },
+              "examples": [[400, 500, 600, 700]]
+            },
+            "line_height_ratio": {
+              "type": "number",
+              "description": "Base line-height ratio",
+              "minimum": 1.0,
+              "maximum": 2.5,
+              "examples": [1.5]
+            }
+          }
+        },
+        "spacing": {
+          "type": "object",
+          "description": "Spacing system",
+          "required": ["base_unit", "scale", "density"],
+          "properties": {
+            "base_unit": {
+              "type": "integer",
+              "description": "Base spacing unit in pixels",
+              "enum": [4, 8, 10],
+              "examples": [8]
+            },
+            "scale": {
+              "type": "array",
+              "description": "Spacing scale (multiples of base unit)",
+              "items": {
+                "type": "integer"
+              },
+              "examples": [[4, 8, 12, 16, 24, 32, 48, 64, 96]]
+            },
+            "density": {
+              "type": "string",
+              "description": "Overall spacing density",
+              "enum": ["compact", "comfortable", "spacious"],
+              "examples": ["comfortable"]
+            },
+            "usage_rules": {
+              "type": "object",
+              "description": "Spacing usage guidelines",
+              "properties": {
+                "component_padding": {
+                  "type": "string",
+                  "examples": ["16px (2 units) for most components"]
+                },
+                "section_margin": {
+                  "type": "string",
+                  "examples": ["64px (8 units) between major sections"]
+                },
+                "element_gap": {
+                  "type": "string",
+                  "examples": ["8px (1 unit) between related elements"]
+                }
+              }
+            }
+          }
+        },
+        "effects": {
+          "type": "object",
+          "description": "Visual effects (shadows, borders, radii)",
+          "properties": {
+            "shadows": {
+              "type": "array",
+              "description": "Box shadow definitions",
+              "items": {
+                "$ref": "#/definitions/ShadowToken"
+              }
+            },
+            "border_radius": {
+              "type": "object",
+              "description": "Border radius scale",
+              "patternProperties": {
+                "^(none|sm|md|lg|xl|full)$": {
+                  "type": "string",
+                  "pattern": "^\\d+(px|rem)$",
+                  "examples": ["4px", "8px", "12px"]
+                }
+              }
+            },
+            "border_width": {
+              "type": "string",
+              "description": "Standard border width",
+              "examples": ["1px"]
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "description": "UI component patterns extracted from the brand",
+      "items": {
+        "$ref": "#/definitions/Component"
+      },
+      "minItems": 8,
+      "examples": [[
+        {
+          "name": "Primary Button",
+          "category": "button",
+          "description": "Main call-to-action button",
+          "visual_properties": {},
+          "usage_rules": "Use for primary actions like 'Sign Up', 'Get Started'",
+          "example_html": "<button>Get Started</button>"
+        }
+      ]]
+    },
+    "patterns": {
+      "type": "array",
+      "description": "Larger UI patterns and layouts",
+      "items": {
+        "$ref": "#/definitions/Pattern"
+      },
+      "examples": [[
+        {
+          "name": "Hero Section",
+          "description": "Homepage hero with headline, subtext, and CTA",
+          "structure": "Centered layout with large headline (h1), supporting copy (body), and primary button",
+          "usage": "Homepage, landing pages",
+          "example_screenshot": "hero_section.png"
+        }
+      ]]
+    },
+    "accessibility": {
+      "type": "object",
+      "description": "Accessibility considerations and issues",
+      "properties": {
+        "contrast_issues": {
+          "type": "array",
+          "description": "Color combinations with insufficient contrast",
+          "items": {
+            "type": "object",
+            "properties": {
+              "foreground": {
+                "type": "string"
+              },
+              "background": {
+                "type": "string"
+              },
+              "ratio": {
+                "type": "number"
+              },
+              "required_ratio": {
+                "type": "number"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["fail", "AA-fail", "AAA-fail"]
+              }
+            }
+          }
+        },
+        "min_touch_target": {
+          "type": "string",
+          "description": "Minimum touch target size",
+          "examples": ["44px x 44px"]
+        },
+        "focus_indicators": {
+          "type": "boolean",
+          "description": "Whether visible focus indicators are present"
+        }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "description": "Additional notes and observations",
+      "properties": {
+        "strengths": {
+          "type": "array",
+          "description": "What the brand does well visually",
+          "items": {
+            "type": "string"
+          }
+        },
+        "opportunities": {
+          "type": "array",
+          "description": "Potential areas for improvement",
+          "items": {
+            "type": "string"
+          }
+        },
+        "edge_cases": {
+          "type": "array",
+          "description": "Edge cases or exceptions noted",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ColorToken": {
+      "type": "object",
+      "required": ["value", "usage"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Hex color value",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "examples": ["#635bff"]
+        },
+        "usage": {
+          "type": "string",
+          "description": "When and how to use this color",
+          "examples": ["Main CTAs, links, active states, brand accents"]
+        },
+        "contrast_ratio_white": {
+          "type": "number",
+          "description": "Contrast ratio against white background",
+          "minimum": 1,
+          "maximum": 21,
+          "examples": [4.52]
+        },
+        "contrast_ratio_black": {
+          "type": "number",
+          "description": "Contrast ratio against black background",
+          "minimum": 1,
+          "maximum": 21,
+          "examples": [16.48]
+        }
+      }
+    },
+    "FontFamily": {
+      "type": "object",
+      "required": ["name", "fallback", "usage"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Font family name",
+          "examples": ["Inter", "SF Pro Display"]
+        },
+        "fallback": {
+          "type": "string",
+          "description": "Fallback font stack",
+          "examples": ["-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"]
+        },
+        "usage": {
+          "type": "string",
+          "description": "Where this font is used",
+          "examples": ["All body text and UI elements"]
+        },
+        "source": {
+          "type": "string",
+          "description": "Font source (Google Fonts, Adobe Fonts, custom)",
+          "examples": ["Google Fonts"]
+        }
+      }
+    },
+    "TypographyStyle": {
+      "type": "object",
+      "required": ["font_size", "line_height", "font_weight"],
+      "properties": {
+        "font_size": {
+          "type": "string",
+          "description": "Font size with unit",
+          "pattern": "^\\d+(\\.\\d+)?(px|rem|em)$",
+          "examples": ["48px", "2rem"]
+        },
+        "line_height": {
+          "type": "string",
+          "description": "Line height (unitless or with unit)",
+          "examples": ["1.2", "56px"]
+        },
+        "font_weight": {
+          "type": "integer",
+          "description": "Font weight",
+          "enum": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+          "examples": [700]
+        },
+        "letter_spacing": {
+          "type": "string",
+          "description": "Letter spacing (optional)",
+          "examples": ["-0.02em", "0.5px"]
+        },
+        "text_transform": {
+          "type": "string",
+          "description": "Text transform (optional)",
+          "enum": ["none", "uppercase", "lowercase", "capitalize"],
+          "examples": ["none"]
+        },
+        "usage": {
+          "type": "string",
+          "description": "When to use this style",
+          "examples": ["Page titles, hero headlines"]
+        }
+      }
+    },
+    "ShadowToken": {
+      "type": "object",
+      "required": ["name", "value"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Shadow name (sm, md, lg, etc.)",
+          "examples": ["sm", "md", "lg"]
+        },
+        "value": {
+          "type": "string",
+          "description": "CSS box-shadow value",
+          "examples": ["0 1px 3px rgba(0, 0, 0, 0.1)"]
+        },
+        "usage": {
+          "type": "string",
+          "description": "When to use this shadow",
+          "examples": ["Cards, modals, elevated components"]
+        }
+      }
+    },
+    "Component": {
+      "type": "object",
+      "required": ["name", "category", "description", "visual_properties"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Component name",
+          "examples": ["Primary Button", "Input Field", "Card"]
+        },
+        "category": {
+          "type": "string",
+          "description": "Component category",
+          "enum": ["button", "input", "card", "navigation", "modal", "badge", "avatar", "icon", "table", "form", "other"],
+          "examples": ["button"]
+        },
+        "description": {
+          "type": "string",
+          "description": "What this component is and does",
+          "examples": ["Main call-to-action button for primary actions"]
+        },
+        "visual_properties": {
+          "type": "object",
+          "description": "Visual styling properties",
+          "properties": {
+            "background_color": {
+              "type": "string",
+              "examples": ["#635bff"]
+            },
+            "text_color": {
+              "type": "string",
+              "examples": ["#ffffff"]
+            },
+            "border": {
+              "type": "string",
+              "examples": ["none", "1px solid #e0e0e0"]
+            },
+            "border_radius": {
+              "type": "string",
+              "examples": ["6px"]
+            },
+            "padding": {
+              "type": "string",
+              "examples": ["12px 24px"]
+            },
+            "font_size": {
+              "type": "string",
+              "examples": ["16px"]
+            },
+            "font_weight": {
+              "type": "integer",
+              "examples": [600]
+            },
+            "shadow": {
+              "type": "string",
+              "examples": ["0 1px 3px rgba(0, 0, 0, 0.1)"]
+            }
+          }
+        },
+        "states": {
+          "type": "object",
+          "description": "Different component states (hover, active, disabled)",
+          "properties": {
+            "hover": {
+              "type": "object",
+              "description": "Visual changes on hover"
+            },
+            "active": {
+              "type": "object",
+              "description": "Visual changes when active"
+            },
+            "disabled": {
+              "type": "object",
+              "description": "Visual changes when disabled"
+            }
+          }
+        },
+        "usage_rules": {
+          "type": "string",
+          "description": "When and how to use this component",
+          "examples": ["Use for primary actions like 'Sign Up', 'Get Started'. Limit to 1-2 per page."]
+        },
+        "example_html": {
+          "type": "string",
+          "description": "HTML code example",
+          "examples": ["<button class=\"btn-primary\">Get Started</button>"]
+        },
+        "example_screenshot": {
+          "type": "string",
+          "description": "Path to screenshot showing this component",
+          "examples": ["components/primary_button.png"]
+        }
+      }
+    },
+    "Pattern": {
+      "type": "object",
+      "required": ["name", "description", "structure"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Pattern name",
+          "examples": ["Hero Section", "Navigation Bar", "Feature Grid"]
+        },
+        "description": {
+          "type": "string",
+          "description": "What this pattern is",
+          "examples": ["Full-width hero section with headline, subtext, and CTA"]
+        },
+        "structure": {
+          "type": "string",
+          "description": "Structural description of the pattern",
+          "examples": ["Centered layout with h1 headline (64px), body text (20px), and primary button. Background uses subtle gradient."]
+        },
+        "usage": {
+          "type": "string",
+          "description": "Where to use this pattern",
+          "examples": ["Homepage, landing pages, product pages"]
+        },
+        "components_used": {
+          "type": "array",
+          "description": "Component names used in this pattern",
+          "items": {
+            "type": "string"
+          },
+          "examples": [["Primary Button", "Headline Text"]]
+        },
+        "layout_properties": {
+          "type": "object",
+          "description": "Layout-specific properties",
+          "properties": {
+            "max_width": {
+              "type": "string",
+              "examples": ["1200px"]
+            },
+            "padding": {
+              "type": "string",
+              "examples": ["80px 24px"]
+            },
+            "alignment": {
+              "type": "string",
+              "enum": ["left", "center", "right"],
+              "examples": ["center"]
+            }
+          }
+        },
+        "example_screenshot": {
+          "type": "string",
+          "description": "Path to screenshot showing this pattern",
+          "examples": ["patterns/hero_section.png"]
+        }
+      }
+    }
+  }
+}
