@@ -15,6 +15,42 @@ export default function Processing() {
   const [currentStage, setCurrentStage] = useState('setup');
   const [brandId, setBrandId] = useState(null);
   const [error, setError] = useState(null);
+  const [extractedData, setExtractedData] = useState({
+    colors: [],
+    fonts: [],
+    components: []
+  });
+
+  // Helper to extract brand data from event messages
+  const extractBrandDataFromMessage = (message) => {
+    const updates = {};
+
+    // Extract colors
+    const colorMatch = message.match(/color[s]?.*?(?:#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3}|rgb\([^)]+\))/gi);
+    if (colorMatch) {
+      const colors = message.match(/#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3}|rgb\([^)]+\)/gi);
+      if (colors) {
+        updates.colors = colors.slice(0, 8); // Limit to 8 colors
+      }
+    }
+
+    // Extract fonts
+    const fontMatch = message.match(/font[- ]?family[:\s]+([^,;]+)/gi);
+    if (fontMatch) {
+      const fonts = fontMatch.map(f => f.replace(/font[- ]?family[:\s]+/gi, '').trim());
+      updates.fonts = fonts.slice(0, 4);
+    }
+
+    // Extract component mentions
+    if (message.toLowerCase().includes('button')) {
+      updates.components = [...(extractedData.components || []), 'button'];
+    }
+    if (message.toLowerCase().includes('card')) {
+      updates.components = [...(extractedData.components || []), 'card'];
+    }
+
+    return updates;
+  };
 
   useEffect(() => {
     // Create SSE connection
@@ -26,6 +62,16 @@ export default function Processing() {
       // Store brand ID if present
       if (event.brand_id) {
         setBrandId(event.brand_id);
+      }
+
+      // Extract brand data from messages
+      const brandDataUpdates = extractBrandDataFromMessage(event.message);
+      if (Object.keys(brandDataUpdates).length > 0) {
+        setExtractedData(prev => ({
+          colors: brandDataUpdates.colors || prev.colors,
+          fonts: brandDataUpdates.fonts || prev.fonts,
+          components: brandDataUpdates.components || prev.components
+        }));
       }
 
       // Handle completion
@@ -45,7 +91,7 @@ export default function Processing() {
     return () => {
       eventSource.close();
     };
-  }, [sessionId, navigate]);
+  }, [sessionId, navigate, extractedData.components]);
 
   const getStageIcon = (stage) => {
     const iconMap = {
@@ -91,6 +137,34 @@ export default function Processing() {
       error: 'Error'
     };
     return displays[stage] || stage;
+  };
+
+  // Generate reasoning text for stages
+  const getReasoningForStage = (stage, message) => {
+    const reasoningMap = {
+      setup: 'Initializing browser engine and preparing screenshot pipeline...',
+      capture: 'Capturing full-page screenshots across multiple viewport sizes to analyze responsive design patterns...',
+      analyze: 'Running computer vision analysis on screenshots to detect colors, fonts, spacing, and component patterns...',
+      synthesize: 'Building design token hierarchy and matching components to extracted visual properties...',
+      evaluate: 'Validating brand consistency across pages and scoring extraction quality...',
+      finalize: 'Generating production-ready CSS variables and component code snippets...'
+    };
+
+    // Add context-specific reasoning based on message content
+    if (message.toLowerCase().includes('screenshot')) {
+      return 'Processing screenshots with computer vision to extract visual patterns...';
+    }
+    if (message.toLowerCase().includes('color')) {
+      return 'Analyzing color palette across all pages to identify primary, secondary, and accent colors...';
+    }
+    if (message.toLowerCase().includes('font') || message.toLowerCase().includes('typography')) {
+      return 'Detecting font families, sizes, and weights to build typography scale...';
+    }
+    if (message.toLowerCase().includes('component')) {
+      return 'Identifying reusable UI components and extracting their visual properties...';
+    }
+
+    return reasoningMap[stage] || null;
   };
 
   const stages = ['setup', 'capture', 'analyze', 'synthesize', 'evaluate', 'finalize'];
@@ -155,65 +229,167 @@ export default function Processing() {
           </div>
         </div>
 
-        {/* Build Log */}
-        <div className="bg-gray-900 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] border border-gray-700 p-6 font-mono text-sm overflow-hidden">
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-700">
-            <span className="text-[#e9d5c4] font-semibold">Build Log</span>
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            </div>
-          </div>
+        {/* Three-Panel Layout: Build Log + Live Preview */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Build Log (2/3 width on large screens) */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-900 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] border border-gray-700 p-6 font-mono text-sm overflow-hidden">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-700">
+                <span className="text-[#e9d5c4] font-semibold">Build Log</span>
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+              </div>
 
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {events.length === 0 ? (
-              <div className="text-gray-500 animate-pulse">Waiting for events...</div>
-            ) : (
-              events.map((event, index) => {
-                const time = new Date(event.timestamp).toLocaleTimeString('en-US', {
-                  hour12: false,
-                  minute: '2-digit',
-                  second: '2-digit'
-                });
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {events.length === 0 ? (
+                  <div className="text-gray-500 animate-pulse">Waiting for events...</div>
+                ) : (
+                  events.map((event, index) => {
+                    const time = new Date(event.timestamp).toLocaleTimeString('en-US', {
+                      hour12: false,
+                      minute: '2-digit',
+                      second: '2-digit'
+                    });
 
-                return (
-                  <div key={index} className="group">
-                    <div className="flex items-start gap-3">
-                      <span className="text-gray-500">[{time}]</span>
-                      <span className={`${
-                        event.stage === 'error'
-                          ? 'text-red-400'
-                          : event.stage === 'complete'
-                          ? 'text-green-400'
-                          : 'text-[#e9d5c4]'
-                      }`}>
-                        {renderStageIcon(event.stage, "w-5 h-5")}
-                      </span>
-                      <div className="flex-1">
-                        <span
-                          className={`${
+                    const reasoning = getReasoningForStage(event.stage, event.message);
+
+                    return (
+                      <div key={index} className="group">
+                        <div className="flex items-start gap-3">
+                          <span className="text-gray-500">[{time}]</span>
+                          <span className={`${
                             event.stage === 'error'
                               ? 'text-red-400'
                               : event.stage === 'complete'
                               ? 'text-green-400'
-                              : 'text-gray-300'
-                          }`}
-                        >
-                          {event.message}
-                        </span>
-                      </div>
-                      <span className="text-[#e9d5c4] text-xs">
-                        {event.progress_percent}%
-                      </span>
-                    </div>
-                  </div>
-                );
-              })
-            )}
+                              : 'text-[#e9d5c4]'
+                          }`}>
+                            {renderStageIcon(event.stage, "w-5 h-5")}
+                          </span>
+                          <div className="flex-1">
+                            <span
+                              className={`${
+                                event.stage === 'error'
+                                  ? 'text-red-400'
+                                  : event.stage === 'complete'
+                                  ? 'text-green-400'
+                                  : 'text-gray-300'
+                              }`}
+                            >
+                              {event.message}
+                            </span>
 
-            {/* Auto-scroll anchor */}
-            <div ref={(el) => el?.scrollIntoView({ behavior: 'smooth' })} />
+                            {/* Reasoning Block (shows on hover) */}
+                            {reasoning && (
+                              <div className="mt-2 pl-2 border-l-2 border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <span className="text-gray-500 text-xs italic">
+                                  {reasoning}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[#e9d5c4] text-xs">
+                            {event.progress_percent}%
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+
+                {/* Auto-scroll anchor */}
+                <div ref={(el) => el?.scrollIntoView({ behavior: 'smooth' })} />
+              </div>
+            </div>
+          </div>
+
+          {/* Live Preview Panel (1/3 width on large screens) */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-6 sticky top-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="text-2xl">✨</span>
+                <span>Live Preview</span>
+              </h3>
+
+              {/* Colors */}
+              {extractedData.colors.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <span>🎨</span>
+                    <span>Colors ({extractedData.colors.length})</span>
+                  </h4>
+                  <div className="grid grid-cols-4 gap-2">
+                    {extractedData.colors.map((color, i) => (
+                      <div
+                        key={i}
+                        className="aspect-square rounded-lg border-2 border-gray-200 shadow-sm"
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Fonts */}
+              {extractedData.fonts.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <span>🔤</span>
+                    <span>Fonts ({extractedData.fonts.length})</span>
+                  </h4>
+                  <div className="space-y-2">
+                    {extractedData.fonts.map((font, i) => (
+                      <div
+                        key={i}
+                        className="px-3 py-2 bg-gray-50 rounded-lg text-sm font-medium text-gray-900 border border-gray-200"
+                        style={{ fontFamily: font }}
+                      >
+                        {font}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Components */}
+              {extractedData.components.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <span>🧩</span>
+                    <span>Components ({extractedData.components.length})</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {[...new Set(extractedData.components)].map((comp, i) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium border border-purple-200"
+                      >
+                        {comp}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Placeholder when nothing extracted */}
+              {extractedData.colors.length === 0 &&
+               extractedData.fonts.length === 0 &&
+               extractedData.components.length === 0 && (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-3 animate-pulse">🔍</div>
+                  <p className="text-sm text-gray-500">
+                    Analyzing website...
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Brand elements will appear here as they're discovered
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

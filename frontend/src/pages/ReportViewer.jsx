@@ -12,6 +12,10 @@ import ColorSwatch from '../components/ColorSwatch';
 import TypographyPreview from '../components/TypographyPreview';
 import ComponentPreview from '../components/ComponentPreview';
 import ScoreBadge from '../components/ScoreBadge';
+import StyleShowcase from '../components/StyleShowcase';
+import HeroSection from '../components/HeroSection';
+import VisualBrandEssence from '../components/VisualBrandEssence';
+import BrandInAction from '../components/BrandInAction';
 
 // Utility function to clean URLs by removing query parameters
 const cleanUrl = (url) => {
@@ -29,7 +33,7 @@ export default function ReportViewer() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('identity'); // 'identity' or 'diagnostics'
+  const [activeTab, setActiveTab] = useState('identity'); // 'identity', 'styleguide', or 'diagnostics'
 
   useEffect(() => {
     loadBrandData();
@@ -123,6 +127,16 @@ export default function ReportViewer() {
               Brand Identity
             </button>
             <button
+              onClick={() => setActiveTab('styleguide')}
+              className={`px-6 py-3 font-semibold rounded-t-2xl transition-all duration-200 ${
+                activeTab === 'styleguide'
+                  ? 'bg-[#1f1f1f] text-white shadow-lg shadow-black/10'
+                  : 'bg-[#f4f2ef] text-gray-600 hover:bg-[#e9d5c4]/50'
+              }`}
+            >
+              Style Guide
+            </button>
+            <button
               onClick={() => setActiveTab('diagnostics')}
               className={`px-6 py-3 font-semibold rounded-t-2xl transition-all duration-200 ${
                 activeTab === 'diagnostics'
@@ -140,6 +154,8 @@ export default function ReportViewer() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         {activeTab === 'identity' ? (
           <BrandIdentityTab brandSpec={brand_spec} metadata={metadata} />
+        ) : activeTab === 'styleguide' ? (
+          <StyleGuideTab brandSpec={brand_spec} metadata={metadata} />
         ) : (
           <DiagnosticsTab
             evaluation={evaluation}
@@ -161,44 +177,20 @@ function BrandIdentityTab({ brandSpec, metadata }) {
 
   return (
     <div className="space-y-8">
-      {/* Overview Section */}
-      <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
-        <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Brand Essence</h2>
+      {/* Hero Section - NEW! Full-width hero with screenshot */}
+      <HeroSection
+        brandName={metadata.brand_name}
+        sourceUrl={metadata.source_url}
+        brandId={metadata.brand_id}
+        tagline={brand_essence?.description}
+      />
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-              Description
-            </h3>
-            <p className="text-gray-800 leading-relaxed font-medium">{brand_essence?.description}</p>
-          </div>
-
-          <div>
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-              Tone
-            </h3>
-            <p className="text-2xl font-bold text-[#1f1f1f]">{brand_essence?.tone}</p>
-          </div>
-        </div>
-
-        {brand_essence?.adjectives && brand_essence.adjectives.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
-              Brand Adjectives
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {brand_essence.adjectives.map((adj, index) => (
-                <span
-                  key={index}
-                  className="px-4 py-2 bg-[#e9d5c4]/30 text-gray-800 rounded-xl font-semibold text-base"
-                >
-                  {adj}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
+      {/* Visual Brand Essence - NEW! Mood board style */}
+      <VisualBrandEssence
+        brandEssence={brand_essence}
+        brandId={metadata.brand_id}
+        brandName={metadata.brand_name}
+      />
 
       {/* Colors Section */}
       {design_tokens?.colors && (
@@ -389,6 +381,29 @@ function BrandIdentityTab({ brandSpec, metadata }) {
           </div>
         </section>
       )}
+
+      {/* Brand in Action - NEW! Visual journey through the website */}
+      <BrandInAction
+        brandId={metadata.brand_id}
+        brandName={metadata.brand_name}
+      />
+    </div>
+  );
+}
+
+/**
+ * Style Guide Tab - Comprehensive Visual Style Guide
+ */
+function StyleGuideTab({ brandSpec, metadata }) {
+  return (
+    <div className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-[#1f1f1f] mb-2 tracking-tight">Style Guide</h2>
+        <p className="text-gray-600">
+          Complete visual design system with live examples using extracted design tokens
+        </p>
+      </div>
+      <StyleShowcase brandSpec={brandSpec} />
     </div>
   );
 }

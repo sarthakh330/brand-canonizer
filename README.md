@@ -98,7 +98,49 @@ This makes it a valuable tool for design systems, brand consistency, and AI-assi
 - ✅ Evaluation now focuses on extraction quality, not source brand criticism
 - ✅ Automatic refinement for scores below 4.5 using evaluation feedback
 - ✅ Removed placeholder component generation - only real components now
-- ✅ URL display cleaned (query parameters trimmed)
+- ✅ Living style guide with copy-paste HTML/CSS code examples
+
+---
+
+## 📚 Design Knowledge Base
+
+**IMPORTANT:** Before making changes to reports or style guides, always consult these knowledge documents:
+
+### 1. **[docs/STYLE_GUIDE_DESIGN_PRINCIPLES.md](docs/STYLE_GUIDE_DESIGN_PRINCIPLES.md)**
+
+Documents technical style guide best practices:
+- Expert insights from product, design, and engineering perspectives
+- Core design principles for professional brand style guides
+- Component card specifications and standards
+- Visual design standards and CSS patterns
+- AI agent optimization strategies
+- Success metrics and best practices
+- Research from professional design systems (Shopify Polaris, Material Design, Stripe, Carbon)
+
+**Key Principle:** Professional style guides show **artifacts (components with code)** not just **specifications (design tokens)**.
+
+### 2. **[docs/EXPRESSIVE_BRAND_PRESENTATION.md](docs/EXPRESSIVE_BRAND_PRESENTATION.md)** ⭐ NEW
+
+Documents principles for creating visually expressive brand reports:
+- Transform technical specs into visual brand stories
+- Show brands in action with real screenshots prominently
+- Create mood boards and visual storytelling
+- Present brands like pitch decks, not technical documents
+- Complete ecosystem view (hero, sections, components, all together)
+- Learnings from Nano Banana Pro brand creation methodology
+
+**Key Insight:** Brand reports should be **experienced, not just read**. Lead with large, beautiful visuals that immediately convey brand personality.
+
+**For Future Claude Code Instances:**
+When working on Brand Canonizer reports, always:
+1. **Lead with visuals** - Screenshots are essential, not optional
+2. **Show, don't just tell** - Real artifacts over specifications
+3. **Context is king** - Components in their natural environment
+4. **Visual storytelling** - Structure like a portfolio, not a technical doc
+5. **High-quality imagery** - Large, crisp screenshots (1920px+ width)
+6. **Complete ecosystem** - Show the full brand journey from hero to footer
+
+This ensures the report captures the brand's personality and visual impact, making it immediately understandable to design, product, and engineering teams.
 
 ---
 
