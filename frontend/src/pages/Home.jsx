@@ -82,21 +82,21 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fdfdfc]">
+    <div className="min-h-screen bg-background-light font-display">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#fdfdfc]/90 backdrop-blur-md border-b border-gray-100">
+      <header className="sticky top-0 z-50 bg-background-light/90 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#1f1f1f] text-white rounded-xl flex items-center justify-center shadow-lg shadow-black/10">
+            <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/10">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
               </svg>
             </div>
-            <h2 className="text-[#1f1f1f] text-xl font-bold tracking-tight">Brand Canonizer</h2>
+            <h2 className="text-primary text-xl font-bold tracking-tight">Brand Canonizer</h2>
           </div>
           <button
             onClick={() => navigate('/inspirations')}
-            className="px-6 py-2.5 bg-[#1f1f1f] hover:bg-black text-white rounded-full font-semibold text-sm shadow-lg shadow-black/10 hover:shadow-black/20 hover:-translate-y-0.5 transition-all duration-200"
+            className="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-full font-semibold text-sm shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:-translate-y-0.5 transition-all duration-200"
           >
             Design Inspirations
           </button>
@@ -108,7 +108,7 @@ export default function Home() {
         {/* Animated Background Blobs */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
           <div
-            className="absolute -top-[10%] left-[10%] w-[40vw] h-[40vw] bg-[#e9d5c4]/20 rounded-full blur-[120px] mix-blend-multiply opacity-60"
+            className="absolute -top-[10%] left-[10%] w-[40vw] h-[40vw] bg-accent/20 rounded-full blur-[120px] mix-blend-multiply opacity-60"
             style={{ animation: 'pulse 8s ease-in-out infinite' }}
           />
           <div className="absolute top-[20%] right-[5%] w-[35vw] h-[35vw] bg-gray-200 rounded-full blur-[100px] mix-blend-multiply opacity-50" />
@@ -118,19 +118,19 @@ export default function Home() {
           {/* Hero Text */}
           <div className="text-center mb-12">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#e9d5c4]/20 border border-[#e9d5c4]/30 text-xs font-semibold uppercase tracking-wider text-gray-800 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 border border-accent/30 text-xs font-semibold uppercase tracking-wider text-gray-800 mb-6">
               <span className="w-2 h-2 rounded-full bg-orange-400"></span>
               AI-Powered Design Analysis
             </div>
 
             {/* Headline */}
-            <h1 className="text-[#1f1f1f] tracking-tight text-5xl md:text-6xl lg:text-[72px] font-extrabold leading-[1.05] mb-8">
+            <h1 className="text-primary tracking-tight text-5xl md:text-6xl lg:text-[72px] font-extrabold leading-[1.05] mb-8">
               Turn your website into a{' '}
               <br className="hidden md:block" />
               <span className="relative inline-block">
                 <span className="relative z-10">brand system.</span>
                 <svg
-                  className="absolute w-full h-3 -bottom-1 left-0 text-[#e9d5c4]/60"
+                  className="absolute w-full h-3 -bottom-1 left-0 text-accent/60"
                   preserveAspectRatio="none"
                   viewBox="0 0 100 10"
                 >
@@ -151,7 +151,7 @@ export default function Home() {
           </div>
 
           {/* Input Form */}
-          <div className="w-full max-w-[680px] bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] p-3 border border-gray-100">
+          <div className="w-full max-w-[680px] bg-white rounded-3xl shadow-soft p-3 border border-gray-100">
             <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-2">
               {/* URL Input */}
               <div className="relative flex-grow">
@@ -165,7 +165,7 @@ export default function Home() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="paste website url here..."
-                  className="block w-full pl-12 pr-4 py-5 rounded-2xl bg-[#f4f2ef] border border-transparent focus:bg-white focus:border-gray-200 text-lg text-[#1f1f1f] placeholder:text-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300"
+                  className="block w-full pl-12 pr-4 py-5 rounded-2xl bg-surface-light border border-transparent focus:bg-white focus:border-gray-200 text-lg text-primary placeholder:text-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-100 transition-all duration-300"
                   disabled={loading}
                 />
               </div>
@@ -174,7 +174,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-[#1f1f1f] hover:bg-black text-white text-base font-bold py-5 px-8 rounded-2xl shadow-lg shadow-black/10 hover:shadow-black/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary hover:bg-primary-hover text-white text-base font-bold py-5 px-8 rounded-2xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
@@ -236,11 +236,11 @@ export default function Home() {
       {/* Past Extractions Section */}
       {brands.length > 0 && (
         <section className="max-w-7xl mx-auto px-6 py-16">
-          <h2 className="text-3xl font-bold text-[#1f1f1f] mb-8 tracking-tight">Past Extractions</h2>
+          <h2 className="text-3xl font-bold text-primary mb-8 tracking-tight">Past Extractions</h2>
 
           {loadingBrands ? (
             <div className="flex items-center justify-center py-12">
-              <svg className="animate-spin h-8 w-8 text-[#1f1f1f]" viewBox="0 0 24 24">
+              <svg className="animate-spin h-8 w-8 text-primary" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>

@@ -1,36 +1,57 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-:root {
+/* Tailwind v4 Theme Configuration */
+@theme {
+  /* Custom Colors */
   --color-primary: #1f1f1f;
+  --color-primary-hover: #000000;
   --color-accent: #e9d5c4;
-  --color-background: #fdfdfc;
-  --color-surface: #f4f2ef;
+  --color-background-light: #fdfdfc;
+  --color-surface-light: #f4f2ef;
+  --color-background-dark: #101c22;
+
+  /* Font Family */
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+
+  /* Border Radius - extended values */
+  --radius-3xl: 1.5rem;
+
+  /* Box Shadows */
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Apply font globally */
+@layer base {
+  body {
+    font-family: theme('font.display');
+  }
 }
 
-body {
-  margin: 0;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #fdfdfc;
-  color: #1f1f1f;
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  code {
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
+  }
 }
 
-#root {
-  min-height: 100vh;
-}
-
-code {
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
-}
-
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -46,4 +67,23 @@ code {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0,0,0,0.2);
+}
+
+/* Material Symbols Icon Font */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga';
 }

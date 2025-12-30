@@ -13,6 +13,16 @@ import TypographyPreview from '../components/TypographyPreview';
 import ComponentPreview from '../components/ComponentPreview';
 import ScoreBadge from '../components/ScoreBadge';
 
+// Utility function to clean URLs by removing query parameters
+const cleanUrl = (url) => {
+  try {
+    const urlObj = new URL(url);
+    return `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
+  } catch (e) {
+    return url;
+  }
+};
+
 export default function ReportViewer() {
   const { brandId } = useParams();
   const navigate = useNavigate();
@@ -39,13 +49,13 @@ export default function ReportViewer() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#fdfdfc] flex items-center justify-center">
         <div className="text-center">
-          <svg className="animate-spin h-12 w-12 text-purple-600 mx-auto mb-4" viewBox="0 0 24 24">
+          <svg className="animate-spin h-12 w-12 text-[#1f1f1f] mx-auto mb-4" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
-          <p className="text-gray-600">Loading brand data...</p>
+          <p className="text-gray-600 font-medium">Loading brand data...</p>
         </div>
       </div>
     );
@@ -53,16 +63,16 @@ export default function ReportViewer() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md">
+      <div className="min-h-screen bg-[#fdfdfc] flex items-center justify-center p-6">
+        <div className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] p-8 max-w-md border border-gray-100">
           <svg className="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Brand</h2>
+          <h2 className="text-xl font-bold text-[#1f1f1f] mb-2">Error Loading Brand</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={() => navigate('/')}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700"
+            className="w-full px-6 py-3 bg-[#1f1f1f] hover:bg-black text-white rounded-2xl font-semibold transition-all duration-200 shadow-lg shadow-black/10 hover:shadow-black/20 hover:-translate-y-0.5"
           >
             Return Home
           </button>
@@ -74,23 +84,23 @@ export default function ReportViewer() {
   const { brand_spec, evaluation, execution_trace, metadata } = data;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#fdfdfc]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
+      <header className="bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.03)] sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate('/')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-[#f4f2ef] rounded-xl transition-all duration-200"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-[#1f1f1f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{metadata.brand_name}</h1>
-                <p className="text-sm text-gray-600">{metadata.source_url}</p>
+                <h1 className="text-2xl font-bold text-[#1f1f1f] tracking-tight">{metadata.brand_name}</h1>
+                <p className="text-sm text-gray-500 font-medium">{cleanUrl(metadata.source_url)}</p>
               </div>
             </div>
             <ScoreBadge
@@ -104,20 +114,20 @@ export default function ReportViewer() {
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab('identity')}
-              className={`px-6 py-3 font-semibold rounded-t-lg transition-colors ${
+              className={`px-6 py-3 font-semibold rounded-t-2xl transition-all duration-200 ${
                 activeTab === 'identity'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-[#1f1f1f] text-white shadow-lg shadow-black/10'
+                  : 'bg-[#f4f2ef] text-gray-600 hover:bg-[#e9d5c4]/50'
               }`}
             >
               Brand Identity
             </button>
             <button
               onClick={() => setActiveTab('diagnostics')}
-              className={`px-6 py-3 font-semibold rounded-t-lg transition-colors ${
+              className={`px-6 py-3 font-semibold rounded-t-2xl transition-all duration-200 ${
                 activeTab === 'diagnostics'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-[#1f1f1f] text-white shadow-lg shadow-black/10'
+                  : 'bg-[#f4f2ef] text-gray-600 hover:bg-[#e9d5c4]/50'
               }`}
             >
               Diagnostics
@@ -152,35 +162,35 @@ function BrandIdentityTab({ brandSpec, metadata }) {
   return (
     <div className="space-y-8">
       {/* Overview Section */}
-      <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">Brand Essence</h2>
+      <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+        <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Brand Essence</h2>
 
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
               Description
             </h3>
-            <p className="text-gray-800 leading-relaxed">{brand_essence?.description}</p>
+            <p className="text-gray-800 leading-relaxed font-medium">{brand_essence?.description}</p>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
               Tone
             </h3>
-            <p className="text-2xl font-bold text-purple-600">{brand_essence?.tone}</p>
+            <p className="text-2xl font-bold text-[#1f1f1f]">{brand_essence?.tone}</p>
           </div>
         </div>
 
         {brand_essence?.adjectives && brand_essence.adjectives.length > 0 && (
           <div className="mt-6">
-            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
               Brand Adjectives
             </h3>
             <div className="flex flex-wrap gap-2">
               {brand_essence.adjectives.map((adj, index) => (
                 <span
                   key={index}
-                  className="px-4 py-2 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 rounded-lg font-medium text-lg"
+                  className="px-4 py-2 bg-[#e9d5c4]/30 text-gray-800 rounded-xl font-semibold text-base"
                 >
                   {adj}
                 </span>
@@ -192,43 +202,23 @@ function BrandIdentityTab({ brandSpec, metadata }) {
 
       {/* Colors Section */}
       {design_tokens?.colors && (
-        <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Colors</h2>
+        <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+          <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Colors</h2>
 
-          <div className="space-y-8">
-            {/* Primary Color */}
+          {/* Main Colors - Horizontal Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {design_tokens.colors.primary && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Primary</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <ColorSwatch color={design_tokens.colors.primary} name="Primary" />
-                </div>
-                {design_tokens.colors.primary.usage && (
-                  <p className="mt-3 text-sm text-gray-600">{design_tokens.colors.primary.usage}</p>
-                )}
-              </div>
+              <ColorSwatch color={design_tokens.colors.primary} name="Primary" />
             )}
-
-            {/* Secondary Color */}
             {design_tokens.colors.secondary && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Secondary</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <ColorSwatch color={design_tokens.colors.secondary} name="Secondary" />
-                </div>
-              </div>
+              <ColorSwatch color={design_tokens.colors.secondary} name="Secondary" />
             )}
-
-            {/* Accent Color */}
             {design_tokens.colors.accent && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Accent</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <ColorSwatch color={design_tokens.colors.accent} name="Accent" />
-                </div>
-              </div>
+              <ColorSwatch color={design_tokens.colors.accent} name="Accent" />
             )}
+          </div>
 
+          <div className="space-y-6">
             {/* Neutrals */}
             {design_tokens.colors.neutrals && (
               <div>
@@ -258,8 +248,8 @@ function BrandIdentityTab({ brandSpec, metadata }) {
 
       {/* Typography Section */}
       {design_tokens?.typography && (
-        <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Typography</h2>
+        <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+          <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Typography</h2>
 
           {/* Font Families */}
           {design_tokens.typography.font_families && (
@@ -294,8 +284,8 @@ function BrandIdentityTab({ brandSpec, metadata }) {
 
       {/* Spacing Section */}
       {design_tokens?.spacing && (
-        <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Spacing</h2>
+        <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+          <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Spacing</h2>
 
           <div className="grid md:grid-cols-2 gap-6">
             {design_tokens.spacing.base_unit && (
@@ -326,14 +316,17 @@ function BrandIdentityTab({ brandSpec, metadata }) {
             <div className="mt-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Spacing Scale</h3>
               <div className="space-y-3">
-                {Object.entries(design_tokens.spacing.scale).map(([key, value]) => (
+                {(Array.isArray(design_tokens.spacing.scale)
+                  ? design_tokens.spacing.scale.map((value, index) => [index, value])
+                  : Object.entries(design_tokens.spacing.scale)
+                ).map(([key, value]) => (
                   <div key={key} className="flex items-center gap-4">
-                    <span className="text-sm font-mono text-gray-600 w-20">{key}</span>
+                    <span className="text-sm font-mono text-gray-600 w-20">{Array.isArray(design_tokens.spacing.scale) ? `${value}px` : key}</span>
                     <div
                       className="bg-purple-200 h-8 rounded"
-                      style={{ width: value }}
+                      style={{ width: typeof value === 'number' ? `${value}px` : value }}
                     />
-                    <span className="text-sm text-gray-500">{value}</span>
+                    <span className="text-sm text-gray-500">{typeof value === 'number' ? `${value}px` : value}</span>
                   </div>
                 ))}
               </div>
@@ -344,10 +337,10 @@ function BrandIdentityTab({ brandSpec, metadata }) {
             <div className="mt-6 p-4 bg-purple-50 rounded-lg border border-purple-100">
               <h4 className="text-sm font-semibold text-purple-900 mb-2">Usage Rules</h4>
               <ul className="text-sm text-purple-800 space-y-1">
-                {design_tokens.spacing.usage_rules.map((rule, index) => (
-                  <li key={index} className="flex items-start">
+                {Object.entries(design_tokens.spacing.usage_rules).map(([key, value]) => (
+                  <li key={key} className="flex items-start">
                     <span className="mr-2">•</span>
-                    <span>{rule}</span>
+                    <span><strong>{key}:</strong> {value}</span>
                   </li>
                 ))}
               </ul>
@@ -358,8 +351,8 @@ function BrandIdentityTab({ brandSpec, metadata }) {
 
       {/* Components Section */}
       {components && components.length > 0 && (
-        <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Components</h2>
+        <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+          <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Components</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {components.map((component, index) => (
               <ComponentPreview key={index} component={component} />
@@ -369,16 +362,28 @@ function BrandIdentityTab({ brandSpec, metadata }) {
       )}
 
       {/* Patterns Section */}
-      {patterns && Object.keys(patterns).length > 0 && (
-        <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Patterns</h2>
+      {patterns && patterns.length > 0 && (
+        <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+          <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Patterns</h2>
           <div className="space-y-6">
-            {Object.entries(patterns).map(([key, pattern]) => (
-              <div key={key} className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3 capitalize">
-                  {key.replace('_', ' ')}
+            {patterns.map((pattern, index) => (
+              <div key={index} className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  {pattern.name}
                 </h3>
-                <p className="text-gray-700 leading-relaxed">{pattern.description || pattern}</p>
+                <p className="text-gray-700 leading-relaxed mb-3">{pattern.description}</p>
+                {pattern.components_used && pattern.components_used.length > 0 && (
+                  <div className="mt-3">
+                    <h4 className="text-sm font-semibold text-gray-600 mb-2">Components Used:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {pattern.components_used.map((comp, i) => (
+                        <span key={i} className="px-3 py-1 bg-white rounded-lg text-sm text-gray-700 border border-gray-300">
+                          {comp}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -395,11 +400,11 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
   return (
     <div className="space-y-8">
       {/* Evaluation Scores */}
-      <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">Evaluation Scores</h2>
+      <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+        <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Evaluation Scores</h2>
 
         {/* Overall Score */}
-        <div className="mb-8 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
+        <div className="mb-8 p-6 bg-[#e9d5c4]/20 rounded-2xl border border-[#e9d5c4]/30">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-gray-700 mb-1">Overall Quality</h3>
@@ -424,11 +429,11 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
                   <h4 className="text-lg font-semibold text-gray-900">
                     {dimension.display_name}
                   </h4>
-                  <p className="text-sm text-gray-600">{dimension.id}</p>
+                  <p className="text-sm text-gray-600">Weight: {(dimension.weight * 100).toFixed(0)}%</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-purple-600">
+                    <div className="text-3xl font-bold text-[#1f1f1f]">
                       {dimension.score}
                     </div>
                     <div className="text-xs text-gray-500">/ 5.0</div>
@@ -444,7 +449,7 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke="#9333ea"
+                        stroke="#1f1f1f"
                         strokeWidth="3"
                         strokeDasharray={`${(dimension.score / 5) * 100}, 100`}
                         strokeLinecap="round"
@@ -463,11 +468,18 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
                 {dimension.evidence && dimension.evidence.length > 0 && (
                   <div>
                     <h5 className="text-sm font-semibold text-gray-700 mb-1">Evidence</h5>
-                    <ul className="text-sm text-gray-600 space-y-1">
+                    <ul className="text-sm text-gray-600 space-y-2">
                       {dimension.evidence.map((item, i) => (
                         <li key={i} className="flex items-start">
-                          <span className="text-purple-400 mr-2">•</span>
-                          <span>{item}</span>
+                          <span className={`mr-2 ${item.type === 'strength' ? 'text-green-600' : 'text-orange-600'}`}>
+                            {item.type === 'strength' ? '✓' : '⚠'}
+                          </span>
+                          <div>
+                            <div>{item.description}</div>
+                            {item.reference && (
+                              <div className="text-xs text-gray-400 mt-1 font-mono">{item.reference}</div>
+                            )}
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -481,8 +493,8 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
 
       {/* Recommendations */}
       {evaluation.recommendations && evaluation.recommendations.length > 0 && (
-        <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Recommendations</h2>
+        <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+          <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Recommendations</h2>
           <div className="space-y-4">
             {evaluation.recommendations.map((rec, index) => (
               <div
@@ -512,8 +524,8 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
       )}
 
       {/* Execution Timeline */}
-      <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">Execution Timeline</h2>
+      <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+        <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Execution Timeline</h2>
 
         <div className="space-y-4">
           {executionTrace.stages?.map((stage, index) => (
@@ -542,7 +554,7 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-purple-600 h-2 rounded-full"
+                    className="bg-[#1f1f1f] h-2 rounded-full"
                     style={{
                       width: `${(stage.duration_ms / executionTrace.summary.total_duration_ms) * 100}%`
                     }}
@@ -582,17 +594,17 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
       </section>
 
       {/* Downloadable Artifacts */}
-      <section className="bg-white rounded-xl shadow-md border border-gray-200 p-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">Artifacts</h2>
+      <section className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8">
+        <h2 className="text-3xl font-bold text-[#1f1f1f] mb-6 tracking-tight">Artifacts</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <a
             href={`http://localhost:3000/data/brands/${brandId}/reports/brand_spec.json`}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors"
+            className="p-4 border border-gray-200 rounded-2xl hover:border-[#1f1f1f] hover:bg-[#f4f2ef] transition-all duration-200"
           >
             <div className="flex items-center gap-3">
-              <svg className="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10 text-[#1f1f1f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <div>
@@ -606,10 +618,10 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
             href={`http://localhost:3000/data/brands/${brandId}/evaluations/evaluation.json`}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors"
+            className="p-4 border border-gray-200 rounded-2xl hover:border-[#1f1f1f] hover:bg-[#f4f2ef] transition-all duration-200"
           >
             <div className="flex items-center gap-3">
-              <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10 text-[#1f1f1f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               <div>
@@ -623,10 +635,10 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
             href={`http://localhost:3000/data/brands/${brandId}/execution_trace.json`}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors"
+            className="p-4 border border-gray-200 rounded-2xl hover:border-[#1f1f1f] hover:bg-[#f4f2ef] transition-all duration-200"
           >
             <div className="flex items-center gap-3">
-              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10 text-[#1f1f1f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
               </svg>
               <div>
@@ -640,10 +652,10 @@ function DiagnosticsTab({ evaluation, executionTrace, metadata, brandId }) {
             href={`http://localhost:3000/data/brands/${brandId}/metadata.json`}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors"
+            className="p-4 border border-gray-200 rounded-2xl hover:border-[#1f1f1f] hover:bg-[#f4f2ef] transition-all duration-200"
           >
             <div className="flex items-center gap-3">
-              <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10 text-[#1f1f1f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>

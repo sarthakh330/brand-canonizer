@@ -521,17 +521,7 @@ function fixValidationIssues(brandSpec, errors, logger) {
       }
     }
 
-    // Ensure minimum components
-    if (path === '/components' && error.keyword === 'minItems') {
-      while (brandSpec.components.length < 8) {
-        brandSpec.components.push({
-          name: `Component ${brandSpec.components.length + 1}`,
-          category: 'other',
-          description: 'Placeholder component',
-          visual_properties: {}
-        });
-      }
-      logger.info('Added placeholder components to meet minimum requirement');
-    }
+    // Note: Removed automatic placeholder generation
+    // Real components should come from actual website extraction
   });
 }

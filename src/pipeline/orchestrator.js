@@ -12,6 +12,7 @@ import { captureWebsite } from './capture.js';
 import { analyzeWithClaude } from './analyze.js';
 import { synthesizeBrandSpec } from './synthesize.js';
 import { evaluateBrandSpec } from './evaluate.js';
+import { refineBrandSpec } from './refine.js';
 
 /**
  * Extract complete brand identity from a website
@@ -179,6 +180,64 @@ export async function extractBrand(options) {
 
     emit('evaluate', `Evaluation complete - Overall score: ${evaluateResult.data.overall_score.toFixed(2)}/5.0`);
 
+    // Stage 5: Refine (if score < 4.5)
+    let refineResult;
+    let finalBrandSpec = synthesizeResult.data;
+
+    if (evaluateResult.data.overall_score < 4.5) {
+      emit('refine', `Refining specification based on feedback (score: ${evaluateResult.data.overall_score.toFixed(2)})...`);
+
+      refineResult = await refineBrandSpec(
+        synthesizeResult.data,
+        evaluateResult.data,
+        paths,
+        config
+      );
+
+      const refineStartTime = evaluateStartTime + evaluateResult.duration_ms;
+      executionTrace.stages.push({
+        name: 'refine',
+        display_name: 'Refine',
+        status: refineResult.status,
+        start_time: new Date(refineStartTime).toISOString(),
+        end_time: new Date(refineStartTime + refineResult.duration_ms).toISOString(),
+        duration_ms: refineResult.duration_ms,
+        artifacts: refineResult.artifacts,
+        logs: refineResult.logs,
+        errors: refineResult.errors,
+        metrics: refineResult.metrics
+      });
+
+      if (refineResult.status === 'success') {
+        finalBrandSpec = refineResult.data;
+        emit('refine', `Refinement complete - Made ${refineResult.metrics.improvements_made} improvements`);
+      } else if (refineResult.status === 'skipped') {
+        emit('refine', 'Refinement skipped - score is excellent');
+      } else {
+        emit('refine', 'Refinement failed - using original specification');
+      }
+    } else {
+      emit('refine', 'Refinement skipped - score is excellent (≥4.5)');
+      // Add a skipped stage to execution trace
+      const refineStartTime = evaluateStartTime + evaluateResult.duration_ms;
+      executionTrace.stages.push({
+        name: 'refine',
+        display_name: 'Refine',
+        status: 'skipped',
+        start_time: new Date(refineStartTime).toISOString(),
+        end_time: new Date(refineStartTime).toISOString(),
+        duration_ms: 0,
+        artifacts: [],
+        logs: [],
+        errors: [],
+        metrics: {
+          tokens_input: 0,
+          tokens_output: 0,
+          improvements_made: 0
+        }
+      });
+    }
+
     // Finalize execution trace
     const totalDuration = Date.now() - overallStartTime;
     executionTrace.completed_at = new Date().toISOString();
@@ -186,12 +245,18 @@ export async function extractBrand(options) {
     const totalTokens = (analyzeResult.metrics?.tokens_input || 0) +
                        (analyzeResult.metrics?.tokens_output || 0) +
                        (evaluateResult.metrics?.tokens_input || 0) +
-                       (evaluateResult.metrics?.tokens_output || 0);
+                       (evaluateResult.metrics?.tokens_output || 0) +
+                       (refineResult?.metrics?.tokens_input || 0) +
+                       (refineResult?.metrics?.tokens_output || 0);
 
     // Estimate cost (rough estimates for Sonnet)
     // Input: ~$3 per million tokens, Output: ~$15 per million tokens
-    const inputTokens = (analyzeResult.metrics?.tokens_input || 0) + (evaluateResult.metrics?.tokens_input || 0);
-    const outputTokens = (analyzeResult.metrics?.tokens_output || 0) + (evaluateResult.metrics?.tokens_output || 0);
+    const inputTokens = (analyzeResult.metrics?.tokens_input || 0) +
+                        (evaluateResult.metrics?.tokens_input || 0) +
+                        (refineResult?.metrics?.tokens_input || 0);
+    const outputTokens = (analyzeResult.metrics?.tokens_output || 0) +
+                         (evaluateResult.metrics?.tokens_output || 0) +
+                         (refineResult?.metrics?.tokens_output || 0);
     const estimatedCost = (inputTokens / 1000000 * 3) + (outputTokens / 1000000 * 15);
 
     executionTrace.summary = {
@@ -230,8 +295,8 @@ export async function extractBrand(options) {
         top_weaknesses: getTopDimensions(evaluateResult.data.dimensions, false)
       },
       preview: {
-        dominant_colors: extractDominantColors(synthesizeResult.data),
-        primary_font: synthesizeResult.data.design_tokens?.typography?.font_families?.primary?.name || 'Unknown',
+        dominant_colors: extractDominantColors(finalBrandSpec),
+        primary_font: finalBrandSpec.design_tokens?.typography?.font_families?.primary?.name || 'Unknown',
         screenshot_thumbnail: 'captures/screenshots/hero.png'
       },
       execution_summary: {
@@ -240,7 +305,7 @@ export async function extractBrand(options) {
         estimated_cost_usd: parseFloat(estimatedCost.toFixed(4))
       },
       adjectives,
-      tags: generateTags(synthesizeResult.data)
+      tags: generateTags(finalBrandSpec)
     };
 
     await saveJSON(paths.metadata, metadata);
@@ -261,8 +326,9 @@ export async function extractBrand(options) {
       success: true,
       brand_id: brandId,
       brand_name: brandName,
-      brand_spec: synthesizeResult.data,
+      brand_spec: finalBrandSpec, // Use refined spec if refinement was successful
       evaluation: evaluateResult.data,
+      refinement: refineResult || null,
       execution_trace: executionTrace,
       metadata,
       paths: {
@@ -378,6 +444,6 @@ export function getPipelineStatus() {
   return {
     version: config.pipelineVersion,
     available: true,
-    stages: ['capture', 'analyze', 'synthesize', 'evaluate']
+    stages: ['capture', 'analyze', 'synthesize', 'evaluate', 'refine']
   };
 }

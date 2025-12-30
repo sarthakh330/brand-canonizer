@@ -6,7 +6,8 @@
 export default function ComponentPreview({ component }) {
   if (!component) return null;
 
-  const { name, properties, usage_rules, code_example } = component;
+  const { name, visual_properties, usage_rules, example_html } = component;
+  const properties = visual_properties || {};
 
   // Helper to render visual preview based on component type
   const renderVisualPreview = () => {
@@ -19,10 +20,14 @@ export default function ComponentPreview({ component }) {
           <div
             className="px-6 py-3 rounded font-semibold transition-transform hover:scale-105 cursor-pointer"
             style={{
-              backgroundColor: props.background || '#000',
-              color: props.color || '#fff',
+              backgroundColor: props.background_color || props.background || '#000',
+              color: props.text_color || props.color || '#fff',
               border: props.border || 'none',
-              borderRadius: props.border_radius || '0.5rem'
+              borderRadius: props.border_radius || '0.5rem',
+              padding: props.padding || undefined,
+              fontSize: props.font_size || undefined,
+              fontWeight: props.font_weight || undefined,
+              boxShadow: props.shadow || undefined
             }}
           >
             Primary Button
@@ -37,12 +42,14 @@ export default function ComponentPreview({ component }) {
         <div
           className="px-4 py-3 rounded w-full max-w-sm"
           style={{
-            backgroundColor: props.background || '#fff',
+            backgroundColor: props.background_color || props.background || '#fff',
             border: props.border || '1px solid #d1d5db',
-            borderRadius: props.border_radius || '0.5rem'
+            borderRadius: props.border_radius || '0.5rem',
+            padding: props.padding || undefined,
+            fontSize: props.font_size || undefined
           }}
         >
-          <span style={{ color: props.color || '#6b7280' }}>
+          <span style={{ color: props.text_color || props.color || '#6b7280' }}>
             Placeholder text
           </span>
         </div>
@@ -55,10 +62,11 @@ export default function ComponentPreview({ component }) {
         <div
           className="p-6 rounded-lg w-full max-w-sm"
           style={{
-            backgroundColor: props.background || '#fff',
+            backgroundColor: props.background_color || props.background || '#fff',
             border: props.border || '1px solid #e5e7eb',
             borderRadius: props.border_radius || '0.75rem',
-            boxShadow: props.shadow || '0 1px 3px rgba(0,0,0,0.1)'
+            boxShadow: props.shadow || '0 1px 3px rgba(0,0,0,0.1)',
+            padding: props.padding || undefined
           }}
         >
           <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
@@ -74,8 +82,8 @@ export default function ComponentPreview({ component }) {
         <div
           className="inline-block px-3 py-1 rounded-full text-sm font-medium"
           style={{
-            backgroundColor: props.background || '#e0e7ff',
-            color: props.color || '#3730a3',
+            backgroundColor: props.background_color || props.background || '#e0e7ff',
+            color: props.text_color || props.color || '#3730a3',
             border: props.border || 'none'
           }}
         >
@@ -90,14 +98,14 @@ export default function ComponentPreview({ component }) {
         <div
           className="p-4 rounded-lg w-full"
           style={{
-            backgroundColor: props.background || '#fef3c7',
+            backgroundColor: props.background_color || props.background || '#fef3c7',
             border: props.border || '1px solid #fbbf24',
             borderRadius: props.border_radius || '0.5rem'
           }}
         >
           <div
             className="font-semibold text-sm"
-            style={{ color: props.color || '#78350f' }}
+            style={{ color: props.text_color || props.color || '#78350f' }}
           >
             Alert Message
           </div>
@@ -110,7 +118,7 @@ export default function ComponentPreview({ component }) {
       <div
         className="p-6 rounded-lg"
         style={{
-          backgroundColor: props.background || '#f3f4f6',
+          backgroundColor: props.background_color || props.background || '#f3f4f6',
           border: props.border || '1px solid #e5e7eb',
           borderRadius: props.border_radius || '0.5rem'
         }}
@@ -148,17 +156,26 @@ export default function ComponentPreview({ component }) {
       )}
 
       {/* Usage Rules */}
-      {usage_rules && usage_rules.length > 0 && (
+      {usage_rules && (
         <div>
           <h5 className="text-sm font-semibold text-gray-700 mb-2">Usage Rules</h5>
-          <ul className="text-sm text-gray-600 space-y-1">
-            {usage_rules.map((rule, index) => (
-              <li key={index} className="flex items-start">
+          <div className="text-sm text-gray-600">
+            {Array.isArray(usage_rules) ? (
+              <ul className="space-y-1">
+                {usage_rules.map((rule, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-purple-500 mr-2">•</span>
+                    <span>{rule}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="flex items-start">
                 <span className="text-purple-500 mr-2">•</span>
-                <span>{rule}</span>
-              </li>
-            ))}
-          </ul>
+                <span>{usage_rules}</span>
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>

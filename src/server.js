@@ -170,14 +170,26 @@ app.get('/api/brands', async (req, res) => {
     const brands = [];
 
     for (const brandDir of brandDirs) {
-      const metadataPath = path.join(brandsDir, brandDir, 'metadata.json');
+      const brandPath = path.join(brandsDir, brandDir);
+      const metadataPath = path.join(brandPath, 'metadata.json');
+      const brandSpecPath = path.join(brandPath, 'reports', 'brand_spec.json');
+      const evaluationPath = path.join(brandPath, 'evaluations', 'evaluation.json');
+      const executionTracePath = path.join(brandPath, 'execution_trace.json');
 
       try {
+        // Only include brands with all required files
+        await Promise.all([
+          fs.access(metadataPath),
+          fs.access(brandSpecPath),
+          fs.access(evaluationPath),
+          fs.access(executionTracePath)
+        ]);
+
         const metadataContent = await fs.readFile(metadataPath, 'utf-8');
         const metadata = JSON.parse(metadataContent);
         brands.push(metadata);
       } catch (e) {
-        logger.warn(`Could not read metadata for ${brandDir}: ${e.message}`);
+        logger.warn(`Skipping incomplete brand ${brandDir}: missing required files`);
       }
     }
 

@@ -152,68 +152,93 @@ export async function evaluateBrandSpec(brandSpec, paths, config) {
  * Build comprehensive evaluation prompt with rubric
  */
 function buildEvaluationPrompt(brandSpec) {
-  return `You are a brand design expert evaluating the quality of an AI-extracted brand specification.
+  return `You are evaluating the quality of an AI-generated brand specification report.
 
-**YOUR TASK:**
-Evaluate the following brand specification using a 6-dimension rubric. Be thorough, fair, and actionable in your assessment.
+**CRITICAL: WHAT YOU ARE EVALUATING**
+You are NOT evaluating whether the source brand's design is good or bad.
+You ARE evaluating how well this REPORT captures and presents what exists on the source website.
 
-**BRAND SPECIFICATION TO EVALUATE:**
+Your job is to assess:
+1. **Extraction Accuracy**: Did we correctly capture what's visible on the source?
+2. **Report Quality**: Is this report clear, well-organized, and useful?
+3. **Artifact Usability**: Can downstream AI systems use this specification confidently?
+
+**BRAND SPECIFICATION REPORT TO EVALUATE:**
 ${JSON.stringify(brandSpec, null, 2)}
 
 **EVALUATION RUBRIC (6 Dimensions):**
 
-1. **Brand Fidelity (40% weight)**
-   - How accurately does the extraction capture the actual brand identity?
-   - Are colors, typography, and visual elements faithful to the source?
-   - Score 5: Perfect accuracy, all elements match source exactly
-   - Score 4: Highly accurate with minor discrepancies
-   - Score 3: Generally accurate but missing some key elements
-   - Score 2: Multiple inaccuracies or misinterpretations
-   - Score 1: Severely inaccurate or incomplete extraction
+1. **Extraction Fidelity (40% weight)**
+   - How accurately did we capture what's actually on the source website?
+   - Did we correctly extract the colors, typography, and visual elements that are present?
+   - Are there hallucinations (things we made up that aren't on the source)?
+   - Are there omissions (obvious elements we missed)?
 
-2. **Completeness (20% weight)**
-   - Are all required tokens and components present?
-   - Is the coverage comprehensive (8+ components, full color palette, etc.)?
-   - Score 5: Fully complete, rich detail, exceeds requirements
-   - Score 4: Complete with good detail
-   - Score 3: Meets minimum requirements
-   - Score 2: Missing some required elements
-   - Score 1: Severely incomplete
+   IMPORTANT: Do NOT penalize if the source brand uses unusual colors or design choices.
+   Only evaluate whether we ACCURATELY captured what's there.
 
-3. **Parseability (15% weight)**
-   - Does the output validate against the JSON schema?
-   - Is the structure consistent and machine-readable?
-   - Score 5: Perfect schema compliance, clean structure
-   - Score 4: Valid with minor formatting issues
-   - Score 3: Valid but could be better organized
-   - Score 2: Schema validation errors present
+   - Score 5: Perfect extraction - all visible elements captured accurately, no hallucinations
+   - Score 4: Highly accurate with 1-2 minor omissions or slight color value variations
+   - Score 3: Generally accurate but missed some visible elements or has minor hallucinations
+   - Score 2: Multiple significant extraction errors, omissions, or hallucinations
+   - Score 1: Severely inaccurate - major elements wrong or fabricated
+
+2. **Report Completeness (20% weight)**
+   - Did we extract all the visible design elements from the source?
+   - Is the report rich with details found on the actual website?
+   - Did we thoroughly document what was available?
+
+   IMPORTANT: Do NOT penalize if the source website itself is minimal.
+   Only evaluate whether we captured what's available on the source.
+
+   - Score 5: Comprehensive extraction of all visible elements with rich detail
+   - Score 4: Good coverage, minor details may be missing
+   - Score 3: Adequate coverage of major elements, some details missing
+   - Score 2: Missing several visible elements from source
+   - Score 1: Severely incomplete - major elements not documented
+
+3. **Report Structure (15% weight)**
+   - Is the report well-organized and machine-readable?
+   - Does it validate against the JSON schema?
+   - Is the structure consistent and logical?
+
+   - Score 5: Perfect schema compliance, excellent organization, clean structure
+   - Score 4: Valid with good organization, minor formatting improvements possible
+   - Score 3: Valid but organization could be better
+   - Score 2: Schema validation errors or poor structure
    - Score 1: Severely malformed or invalid
 
-4. **Actionability (15% weight)**
-   - Are usage rules clear and specific?
-   - Can an AI system (like Claude Code) apply these tokens confidently?
-   - Score 5: Crystal clear guidelines, specific measurements, no ambiguity
-   - Score 4: Clear guidelines with minor gaps
-   - Score 3: Adequate but could be more specific
-   - Score 2: Vague or incomplete guidelines
-   - Score 1: Unusable or confusing guidelines
+4. **Usage Clarity (15% weight)**
+   - Are the documented design tokens clear and specific enough to use?
+   - Can an AI system (like Claude Code) apply these tokens without ambiguity?
+   - Do usage rules provide concrete guidance?
 
-5. **Accessibility (5% weight)**
-   - Are contrast issues identified?
-   - Are accessibility concerns flagged?
-   - Score 5: Comprehensive accessibility analysis
+   - Score 5: Crystal clear - specific measurements, no ambiguity, ready to use
+   - Score 4: Clear with minor gaps that could be inferred
+   - Score 3: Adequate but could be more specific
+   - Score 2: Vague or incomplete - hard to apply confidently
+   - Score 1: Unusable or confusing
+
+5. **Accessibility Analysis (5% weight)**
+   - Did we identify and document accessibility characteristics of the source?
+   - Are contrast ratios calculated accurately?
+   - Are accessibility concerns properly flagged?
+
+   - Score 5: Comprehensive accessibility analysis with accurate calculations
    - Score 4: Good accessibility coverage
-   - Score 3: Basic accessibility checks
-   - Score 2: Minimal accessibility consideration
+   - Score 3: Basic accessibility checks performed
+   - Score 2: Minimal accessibility analysis
    - Score 1: No accessibility analysis
 
-6. **Insight Depth (5% weight)**
-   - Does the spec explain WHY design choices work?
-   - Are patterns and principles articulated?
-   - Score 5: Deep insights into brand strategy and rationale
-   - Score 4: Good insights with clear reasoning
-   - Score 3: Some insights provided
-   - Score 2: Minimal insights or reasoning
+6. **Strategic Insight (5% weight)**
+   - Does the report provide helpful context about the brand's design approach?
+   - Are patterns and principles documented?
+   - Does it explain the design system's logic?
+
+   - Score 5: Deep insights with clear articulation of design rationale
+   - Score 4: Good insights with reasoning
+   - Score 3: Some useful context provided
+   - Score 2: Minimal insights
    - Score 1: No insights, purely descriptive
 
 **YOUR RESPONSE (JSON):**
@@ -222,14 +247,14 @@ ${JSON.stringify(brandSpec, null, 2)}
   "dimensions": [
     {
       "name": "brand_fidelity",
-      "display_name": "Brand Fidelity",
+      "display_name": "Extraction Fidelity",
       "score": 0.0,
       "weight": 0.4,
-      "justification": "2-3 sentence explanation of the score",
+      "justification": "2-3 sentence explanation focusing on extraction accuracy, not source design quality",
       "evidence": [
         {
           "type": "strength or weakness",
-          "description": "specific example",
+          "description": "specific example of extraction accuracy/inaccuracy",
           "reference": "path in brand_spec (e.g., design_tokens.colors.primary.value)"
         }
       ],
@@ -242,47 +267,47 @@ ${JSON.stringify(brandSpec, null, 2)}
     },
     {
       "name": "completeness",
-      "display_name": "Completeness",
+      "display_name": "Report Completeness",
       "score": 0.0,
       "weight": 0.2,
-      "justification": "2-3 sentence explanation",
+      "justification": "2-3 sentence explanation about what we captured vs what's visible on source",
       "evidence": [
         {
           "type": "strength or weakness",
-          "description": "specific example"
+          "description": "specific example of what we captured or missed"
         }
       ]
     },
     {
       "name": "parseability",
-      "display_name": "Parseability",
+      "display_name": "Report Structure",
       "score": 0.0,
       "weight": 0.15,
-      "justification": "2-3 sentence explanation",
+      "justification": "2-3 sentence explanation about report organization",
       "evidence": []
     },
     {
       "name": "actionability",
-      "display_name": "Actionability",
+      "display_name": "Usage Clarity",
       "score": 0.0,
       "weight": 0.15,
-      "justification": "2-3 sentence explanation",
+      "justification": "2-3 sentence explanation about clarity and usability",
       "evidence": []
     },
     {
       "name": "accessibility",
-      "display_name": "Accessibility",
+      "display_name": "Accessibility Analysis",
       "score": 0.0,
       "weight": 0.05,
-      "justification": "2-3 sentence explanation",
+      "justification": "2-3 sentence explanation about accessibility documentation quality",
       "evidence": []
     },
     {
       "name": "insight_depth",
-      "display_name": "Insight Depth",
+      "display_name": "Strategic Insight",
       "score": 0.0,
       "weight": 0.05,
-      "justification": "2-3 sentence explanation",
+      "justification": "2-3 sentence explanation about insights provided",
       "evidence": []
     }
   ],
@@ -290,9 +315,9 @@ ${JSON.stringify(brandSpec, null, 2)}
     {
       "priority": "critical, high, medium, or low",
       "dimension": "which dimension this affects",
-      "issue": "clear description of the problem",
-      "suggestion": "actionable suggestion for improvement",
-      "expected_impact": "what would improve if this is fixed"
+      "issue": "clear description of the REPORT problem (not source brand problem)",
+      "suggestion": "actionable suggestion to improve the REPORT",
+      "expected_impact": "how this would improve report quality"
     }
   ]
 }
@@ -301,11 +326,11 @@ ${JSON.stringify(brandSpec, null, 2)}
 1. Calculate overall_score as weighted average: sum(dimension.score * dimension.weight)
 2. Be specific in justifications - reference actual values from the brand spec
 3. Provide 3-6 actionable recommendations ordered by priority
-4. Be fair but honest - this is for improvement, not marketing
-5. Consider the brand context - what works for this specific brand?
+4. Focus on improving the REPORT/EXTRACTION, not critiquing the source brand's design choices
+5. All recommendations should be about things WE can fix in our extraction/presentation
 6. Return ONLY valid JSON - no markdown, no additional text
 
-Evaluate now:`;
+Evaluate the report now:`;
 }
 
 /**

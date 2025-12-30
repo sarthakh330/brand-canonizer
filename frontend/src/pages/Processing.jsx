@@ -97,31 +97,31 @@ export default function Processing() {
   const currentStageIndex = stages.indexOf(currentStage);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+    <div className="min-h-screen bg-[#fdfdfc]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.03)]">
         <div className="max-w-5xl mx-auto px-6 py-6">
-          <h1 className="text-2xl font-bold text-gray-900">Brand Extraction in Progress</h1>
-          <p className="text-gray-600 mt-1">Session ID: {sessionId}</p>
+          <h1 className="text-2xl font-bold text-[#1f1f1f] tracking-tight">Brand Extraction in Progress</h1>
+          <p className="text-gray-600 mt-1 font-medium">Session ID: {sessionId}</p>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-5xl mx-auto px-6 py-12">
         {/* Progress Bar */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-gray-100 p-8 mb-8">
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">
+              <span className="text-sm font-bold text-gray-700 tracking-wide">
                 {getStageDisplay(currentStage)}
               </span>
-              <span className="text-sm font-semibold text-purple-600">
+              <span className="text-sm font-bold text-[#1f1f1f]">
                 {progress}%
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div className="w-full bg-[#f4f2ef] rounded-full h-3 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-purple-600 to-blue-600 h-full rounded-full transition-all duration-500 ease-out"
+                className="bg-[#1f1f1f] h-full rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -139,10 +139,10 @@ export default function Processing() {
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all ${
                     index < currentStageIndex
-                      ? 'bg-green-100 border-2 border-green-500 text-green-600'
+                      ? 'bg-[#e9d5c4]/40 border-2 border-[#e9d5c4] text-[#1f1f1f]'
                       : index === currentStageIndex
-                      ? 'bg-purple-100 border-2 border-purple-500 text-purple-600 animate-pulse'
-                      : 'bg-gray-100 border-2 border-gray-300 text-gray-400'
+                      ? 'bg-[#1f1f1f] border-2 border-[#1f1f1f] text-white animate-pulse'
+                      : 'bg-[#f4f2ef] border-2 border-gray-300 text-gray-400'
                   }`}
                 >
                   {renderStageIcon(stage, "w-6 h-6")}
@@ -156,9 +156,9 @@ export default function Processing() {
         </div>
 
         {/* Build Log */}
-        <div className="bg-gray-900 rounded-2xl shadow-lg border border-gray-700 p-6 font-mono text-sm overflow-hidden">
+        <div className="bg-gray-900 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] border border-gray-700 p-6 font-mono text-sm overflow-hidden">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-700">
-            <span className="text-green-400 font-semibold">Build Log</span>
+            <span className="text-[#e9d5c4] font-semibold">Build Log</span>
             <div className="flex gap-2">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -186,7 +186,7 @@ export default function Processing() {
                           ? 'text-red-400'
                           : event.stage === 'complete'
                           ? 'text-green-400'
-                          : 'text-purple-400'
+                          : 'text-[#e9d5c4]'
                       }`}>
                         {renderStageIcon(event.stage, "w-5 h-5")}
                       </span>
@@ -203,7 +203,7 @@ export default function Processing() {
                           {event.message}
                         </span>
                       </div>
-                      <span className="text-purple-400 text-xs">
+                      <span className="text-[#e9d5c4] text-xs">
                         {event.progress_percent}%
                       </span>
                     </div>
@@ -219,7 +219,7 @@ export default function Processing() {
 
         {/* Error Display */}
         {error && (
-          <div className="mt-6 bg-red-50 border border-red-200 rounded-lg p-6">
+          <div className="mt-6 bg-red-50 border border-red-200 rounded-3xl p-6">
             <div className="flex items-start gap-3">
               <svg className="w-8 h-8 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -231,7 +231,7 @@ export default function Processing() {
                 <p className="text-red-700">{error}</p>
                 <button
                   onClick={() => navigate('/')}
-                  className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg font-medium hover:bg-red-200 transition-colors"
+                  className="mt-4 px-6 py-3 bg-red-600 text-white rounded-2xl font-semibold hover:bg-red-700 transition-all duration-200 shadow-lg shadow-red-600/20"
                 >
                   Return to Home
                 </button>
@@ -242,7 +242,7 @@ export default function Processing() {
 
         {/* Success Message */}
         {brandId && currentStage === 'complete' && (
-          <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-6">
+          <div className="mt-6 bg-green-50 border border-green-200 rounded-3xl p-6">
             <div className="flex items-start gap-3">
               <svg className="w-8 h-8 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -259,7 +259,7 @@ export default function Processing() {
                 </p>
                 <button
                   onClick={() => navigate(`/brand/${brandId}`)}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
+                  className="px-6 py-3 bg-[#1f1f1f] hover:bg-black text-white rounded-2xl font-semibold transition-all duration-200 shadow-lg shadow-black/10 hover:shadow-black/20 hover:-translate-y-0.5"
                 >
                   View Report Now
                 </button>
